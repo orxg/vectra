@@ -6,6 +6,3 @@
 1. 向site-packages中添加VectorTrader路径文件pth.
 2. 安装requirments中的需求
 
-# 问题
-1.初始状态的记录(done)
-2.交易时间对不上(done,unique使用不当)
