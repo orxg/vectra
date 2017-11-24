@@ -83,6 +83,13 @@ class Environment():
     def set_dynamic_universe(self,dynamic_universe):
         self.dynamic_universe = dynamic_universe    
         
+    #%% 查询
+    def get_dynamic_universe(self):
+        return self.dynamic_universe.get_dynamic_universe()
+    
+    def get_universe(self):
+        return self.universe
+    
     #%% 用户环境
     def set_context(self,context):
         self.context = context

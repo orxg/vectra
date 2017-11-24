@@ -101,7 +101,7 @@ class SimulationBroker():
             # 市场检验
             high_price = self.env.bar_map.get_stock_latest_bar_value(ticker,'high_price')
             low_price = self.env.bar_map.get_stock_latest_bar_value(ticker,'low_price')
-            volume = self.env.bar_map.get_stock_latest_bar_value(ticker,'volume')
+            total_amount = self.env.bar_map.get_stock_latest_bar_value(ticker,'amount')
             
             if order_price >= high_price:
                 reject_event = Event(EVENT.REJECT_ORDER,
@@ -115,7 +115,7 @@ class SimulationBroker():
                  order = order)
                 self.env.event_bus.publish_event(reject_event)
                 return
-            if amount >= volume:
+            if amount >= total_amount:
                 reject_event = Event(EVENT.REJECT_ORDER,
                  reason = 'order amount is too much',
                  order = order)

@@ -6,12 +6,9 @@ Created on Sun Aug 20 14:12:48 2017
 """
 
 # data_proxy.py
-import datetime
 
-from ..constants import (EASY_MODE,HARD_MODE,
-                         BACKTEST,PAPER_TRADING)
+from ..constants import BACKTEST
 from ..environment import Environment
-from ..events import EVENT
 from ..utils.convertor import array_2_generator
 
 class DataProxy():
@@ -75,7 +72,7 @@ class DataProxy():
         self._universe = universe
         self._backtest_data = self.get_attr(self._universe,start_date,end_date,
                                             frequency,self.data_mode)
-        self._date_time = array_2_generator(self._backtest_data['date_time'])
+        self._trade_date = array_2_generator(self._backtest_data['trade_date'])
         self._open_price = array_2_generator(self._backtest_data['open_price'])
         self._high_price = array_2_generator(self._backtest_data['high_price'])
         self._low_price = array_2_generator(self._backtest_data['low_price'])
@@ -83,7 +80,7 @@ class DataProxy():
         self._volume = array_2_generator(self._backtest_data['volume'])
         self._amount = array_2_generator(self._backtest_data['amount'])
                 
-        self._trade_status = self.get_trade_status()
+        self._trade_status = self.data_source.get_trade_status(universe,start_date,end_date)
 
             
     #%% 回测内部api
@@ -98,7 +95,7 @@ class DataProxy():
        
         '''
         if self.mode == BACKTEST:
-            date_time = next(self._date_time)[0]
+            trade_date = next(self._trade_date)
             open_price = next(self._open_price)
             high_price = next(self._high_price)
             low_price = next(self._low_price)
@@ -106,7 +103,7 @@ class DataProxy():
             volume = next(self._volume)
             amount = next(self._amount)
             
-            bar = {'date_time':date_time,
+            bar = {'trade_date':trade_date,
                    'universe':self._universe,
                    'open_price':open_price,
                    'high_price':high_price,
@@ -139,7 +136,7 @@ class DataProxy():
         --------
         dict
             keys : 
-                date_time,open_price,high_price,low_price,close_price,volume,amount 
+                trade_date,open_price,high_price,low_price,close_price,amount,volume
             value : 
                 np.array
                 
@@ -220,7 +217,7 @@ class DataProxy():
         --------
         DataFrame 
             index 
-                date_time
+                datetime,'trade_date'
             columns
                 (ticker1,ticker2,...,tickern)
             values
@@ -231,7 +228,7 @@ class DataProxy():
         正常交易: 1
         停牌或未上市或已退市: 0
         '''  
-        return self.data_source.get_trade_status(universe,start_date,end_date)  
+        return self._trade_status
 
     def if_tradable(self,ticker,date):
         '''
@@ -242,196 +239,3 @@ class DataProxy():
             return True
         else:
             return False
-#%%                             Abandon temporarily
-
-#==============================================================================
-#         self._dividend_data = {}
-#         self._rights_issue_data = {}
-#         self._trade_status_data = {}
-#         self._list_delist_date_data = {}
-#         self._calendar_days = self.get_calendar_days(start_date,end_date) 
-#         
-#         for ticker in universe:
-#             self._dividend_data[ticker] = self.get_dividend(ticker,
-#                                start_date,end_date)
-#             self._rights_issue_data[ticker] = self.get_rights_issue(ticker,
-#                                    start_date,end_date)
-#             self._trade_status_data[ticker] = self.get_trade_status(ticker,
-#                                    start_date,end_date)
-#             self._list_delist_date_data[ticker] = self.get_list_delist_date(ticker)
-#==============================================================================         
-#==============================================================================
-#     def get_history(self,universe,start_date,end_date,frequency,kind):
-#         '''
-#         数据接口。
-#         数据根据上证交易日进行了补全，没有数据用空值表示。
-# 		
-#         Parameters
-#         -----------
-#         ticker
-#             '600340'
-#     		start_date
-#     			'20100101'
-#     		end_date
-#     			'20150101'
-#     		frequency 
-#     			'1d','1m','5m'
-#     		kind
-#     			'0' 不复权
-#     			'1' 后复权
-#     			'-1' 前复权
-#                 
-#         Returns
-#         --------
-#     		DataFrame (date_time,open_price,high_price,low_price,close_price,volume,amount)
-#         '''
-#         return self.data_source.get_history(universe,start_date,end_date,frequency,kind)
-#==============================================================================
-            
-
-
-#==============================================================================
-#     def get_rights_issue(self,ticker,start_date,end_date):
-#         '''
-#         获取股票已实施配股数据。若时间段内股票没有配股则返回空表。
-# 		
-#         Parameters
-#         ----------
-#     		ticker
-#     			'600340'
-#     		start_date
-#     			'20100101'
-#     		end_date
-#     			'20150101'
-#         Returns
-#         --------
-#     		DataFrame
-#     			index ex_rights_date
-#     			columns 
-#     				'ex_rights_date','rights_issue_per_stock','rights_issue_price',
-#     				'transfer_rights_issue_per_stock','transfer_price'
-#     					(除权日,每股配股,配股价，每股转配，每股转配价)
-#         '''
-#         return self.data_source.get_rights_issue(ticker,start_date,end_date)
-#     
-#     def get_dividend(self,ticker,start_date,end_date):
-#         '''
-#         获取股票时间段内实施的分红送股转增数据。若时间段内股票没有分红送股则返回空表。
-# 		
-#         Parameters
-#         ----------
-#     		ticker
-#     			'600340'
-#     		start_date
-#     			'20100101'
-#     		end_date
-#     			'20150101'
-#         Returns
-#         --------
-#     		DataFrame
-#     			index XD_date
-#     			columns XD_date,dividend_per_share,multiplier
-#     					(除权除息日,每股分红,分红后每股乘数)
-#         '''
-#         return self.data_source.get_dividend(ticker,start_date,end_date)
-#     
-#==============================================================================
-
-    
-#==============================================================================
-#     def get_suspends(self,trade_date):
-#         '''
-#         停牌股票。
-#         
-#         Parameters
-#         -----------
-#         trade_date
-#             '20150101'
-#         Returns
-#         ---------
-#         list 
-#             [ticker,...]
-#         '''
-#         return self.data_source.get_suspends(trade_date)  
-#     
-#     def get_list_delist_date(self,ticker):
-#         '''
-#         获取股票上市与退市日期。若没有退市，则退市为0.
-# 		
-#         Parameters
-#         -----------
-#     		ticker
-#     			600340
-#         Returns
-#         --------
-#     		tuple
-#     			(list_date,delist_date) datetime类型
-#                 
-#         '''
-#         return self.data_source.get_list_delist_date(ticker)
-#==============================================================================
-    
-#==============================================================================
-#     def get_pre_before_trading_dividend(self,ticker,dt):
-#         if self.mode == BACKTEST:
-#             try:
-#                 return self._dividend_data[ticker].loc[dt]
-#             except:
-#                 return 0
-#         elif self.mode == PAPER_TRADING:
-#             try:
-#                 if isinstance(dt,datetime.datetime):
-#                     dt_ = dt.strftime('%Y%m%d')
-#                 return self.get_dividend(ticker,dt_,dt_).loc[dt]
-#             except:
-#                 return 0
-#     
-#     def get_pre_before_trading_rights_issue(self,ticker,dt):
-#         if self.mode == BACKTEST:
-#             try:
-#                 return self._rights_issue_data[ticker].loc[dt]
-#             except:
-#                 return 0
-#         elif self.mode == PAPER_TRADING:
-#             try:
-#                 if isinstance(dt,datetime.datetime):
-#                     dt_ = dt.strftime('%Y%m%d')
-#                 return self.get_rights_issue(ticker,dt_,dt_).loc[dt]
-#             except:
-#                 return 0
-#     
-#     def is_date_trade(self,ticker,dt):
-#         if self.mode == BACKTEST:
-#             list_date,delist_date = self._list_delist_date_data[ticker]
-#             if delist_date != 0:
-#                 if dt >= list_date and dt < delist_date:
-#                     if self._trade_status_data[ticker].loc[dt,'status'] == 1:
-#                         return True
-#                 else:
-#                     return False
-#             elif delist_date == 0:
-#                 if dt >= list_date:
-#                     if self._trade_status_data[ticker].loc[dt,'status'] == 1:
-#                         return True
-#                     else:
-#                         return False
-#         
-#         elif self.mode == PAPER_TRADING:
-#             try:
-#                 list_date,delist_date = self.get_list_delist_date(ticker)
-#                 if delist_date != 0:
-#                     if dt >= list_date and dt < delist_date:
-#                         if not ticker in self.current_suspends:
-#                             return True
-#                     else:
-#                         return False
-#                 elif delist_date == 0:
-#                     if dt >= list_date:
-#                         if not ticker in self.current_suspends:
-#                             return True
-#                         else:
-#                             return False      
-#             except:
-#                 return True
-#==============================================================================
-    

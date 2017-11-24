@@ -6,7 +6,7 @@ Created on Sun Aug 20 14:25:40 2017
 """
 
 # simulation_event_source.py
-from VectorTrader.events import Event,EVENT
+from vectra.events import Event,EVENT
 from .utils import daily_trading_dt    
 
 class SimulationEventSource():
@@ -20,6 +20,7 @@ class SimulationEventSource():
         '''
         calendar_days = self.env.data_proxy.get_calendar_days(start_date,
                                                          end_date)
+        print calendar_days
         if frequency[-1] == 'd':
             for date in calendar_days:
                 dt_before_trading = date.replace(hour=0,minute=0)

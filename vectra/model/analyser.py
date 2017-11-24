@@ -6,6 +6,7 @@ Created on Mon Aug 21 10:52:45 2017
 """
 
 # analyser.py
+import datetime as dt
 import pickle
 from ..events import EVENT
 
@@ -30,6 +31,7 @@ class Analyser():
         self.history_rejected_orders = []
         self.history_kill_orders = []
         
+        self.env.event_bus.add_listener(EVENT.SYSTEM_INITILIZE,self._system_initilize)
         self.env.event_bus.add_listener(EVENT.POST_BAR,self._record_post_bar)
         self.env.event_bus.add_listener(EVENT.PENDING_NEW_ORDER_PASS,self._collect_new_order)
         self.env.event_bus.add_listener(EVENT.REJECT_ORDER,self._collect_rejected_order)
@@ -37,6 +39,7 @@ class Analyser():
         self.env.event_bus.add_listener(EVENT.KILL_ORDER_PASS,self._collect_kill_order)
         self.env.event_bus.add_listener(EVENT.SETTLEMENT,self._record_daily_settlement)
         
+    #%% 持久化
     def get_state(self):
         return pickle.dumps({
                 'universe':self.universe,
@@ -66,6 +69,21 @@ class Analyser():
         self.history_rejected_orders = state['history_rejected_orders']
         self.history_kill_orders = state['history_kill_orders']
     
+    #%% 监听函数
+    def _system_initilize(self,event):
+        calendar_dt = dt.datetime.strptime(self.env.start_date,'%Y%m%d') - \
+        dt.timedelta(days = 1)
+        trading_dt = dt.datetime.strptime(self.env.start_date,'%Y%m%d') - \
+        dt.timedelta(days = 1)
+        account = self.env.account
+        
+        self.cash.append([calendar_dt,trading_dt,
+                          account.cash])
+        self.portfolio_value.append([calendar_dt,trading_dt,
+                                     account.total_account_value])
+        self.position.append([calendar_dt,trading_dt,
+                              account.position.position]) 
+      
     def _record_post_bar(self,event):
         calendar_dt = self.env.calendar_dt
         trading_dt = self.env.trading_dt
@@ -110,6 +128,7 @@ class Analyser():
         order_state = kill_order.get_state()
         self.history_kill_orders.append(order_state)
         
+    #%% 报告
     def report(self):
         '''
         produce the running result and save it into the target file.
@@ -119,8 +138,7 @@ class Analyser():
         state = pickle.loads(self.get_state())
         with open(file_name + '.pkl','w') as f:
             pickle.dump(state,f)
-        return state
-
+        return state    
        
     
     

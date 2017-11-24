@@ -6,7 +6,7 @@ Created on Sun Aug 20 14:08:57 2017
 """
 
 # strategy.py
-import numba as nb
+
 from ..events import EVENT
 
 class Strategy():
@@ -17,14 +17,14 @@ class Strategy():
         
         Parameters
         ----------
-            env
-                策略所在环境。
-            scope
-                strategyloader返回的带有用户定义函数的namespace
-            context
-                用户在函数中作为传递当前环境的上下文
-            bar_map
-                bar数据接口
+        env
+            策略所在环境。
+        scope
+            strategyloader返回的带有用户定义函数的namespace
+        context
+            用户在函数中作为传递当前环境的上下文
+        bar_map
+            bar数据接口
         '''
         self.env = env
         self._user_context = context
@@ -44,7 +44,7 @@ class Strategy():
         self.env.event_bus.prepend_listener(EVENT.BAR,
                                         self.handle_bar)
         if self._after_trading is not None:
-            self.env.event_bus.add_listener(EVENT.BEFORE_TRADING,
+            self.env.event_bus.add_listener(EVENT.AFTER_TRADING,
                                             self.after_trading) 
             
     def initilize(self):

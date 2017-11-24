@@ -9,7 +9,6 @@ Created on Thu Aug 31 14:46:23 2017
 
 import copy
 import numpy as np
-from collections import defaultdict
 
 from vectra.constants import DIRECTION_LONG,DIRECTION_SHORT
 

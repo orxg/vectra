@@ -9,7 +9,7 @@ Created on Tue Aug 22 14:00:35 2017
 import yaml
 import os
 
-from .constants import BACKTEST,PAPER_TRADING
+from .constants import BACKTEST,PAPER_TRADING,EASY_MODE,HARD_MODE
 
 package_path = __path__[0]
 etc_path = os.path.join(package_path,'etc.yaml')
@@ -17,7 +17,7 @@ etc_path = os.path.join(package_path,'etc.yaml')
 with open(etc_path,'r') as f:
     etc = yaml.load(f)
 
-def run_file(config,strategy_name,strategy_path,mode = 'b',
+def run_file(config,strategy_name,strategy_path,data_mode = 'e',mode = 'b',
              persist_path = None,report_path = None):
     '''
     Parameters
@@ -30,16 +30,23 @@ def run_file(config,strategy_name,strategy_path,mode = 'b',
             策略路径
         mode
             模式 'b','p','r',支持回测'b'和模拟'p'
+        data_mode
+            数据模式,'e'前复权,'h'不复权
         persist_path
             在模拟状态下必须给出持久化路径
         report_path
             回测结果保存地址
     '''
-    
+    if data_mode == 'e':
+        data_mode = EASY_MODE
+    elif data_mode == 'h':
+        data_mode = HARD_MODE
+        
     if mode == 'p':
         mode = PAPER_TRADING
     elif mode == 'b':
         mode = BACKTEST
+
         
     if report_path is None:
         report_path = etc['report_path']
@@ -47,8 +54,7 @@ def run_file(config,strategy_name,strategy_path,mode = 'b',
         persist_path = etc['persist_path']
                 
     from .main import all_system_go
-    return all_system_go(config,strategy_name,
-                         strategy_path,mode,
+    return all_system_go(config,strategy_name,strategy_path,data_mode,mode,
                          persist_path,report_path)
     
 

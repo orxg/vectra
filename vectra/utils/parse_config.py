@@ -6,14 +6,12 @@ Created on Thu Sep 07 14:48:39 2017
 """
 
 # parse_config.py
-from ..data.data_source.mixed_data_source.mixed_data_source import \
-                                                    MixedDataSource
+from ..data.data_proxy import DataProxy
 
 class Config(object):
     
     def __init__(self,config):
         self.config = config
-        self.data_source = MixedDataSource()
         self.parse_universe()
         
     def to_dict(self):
@@ -56,7 +54,7 @@ class Config(object):
         else:
             symbol = universe[0]
             if symbol in ['A','hs300','A-st','sz50']:
-                self.universe = self.data_source.get_symbols(symbol)
+                pass
             else:
                 self.universe = universe
        

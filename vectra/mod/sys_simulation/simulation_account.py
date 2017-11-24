@@ -41,7 +41,7 @@ class SimulationAccount():
         '''
         bar后更新持仓市值.
         '''
-        close_price = self.env.data_proxy.get_latest_bar_value()
+        close_price = self.env.bar_map.get_latest_bar_value()
         self.position.refresh_post_bar(close_price)
         market_value = self.position.total_market_value
         self.total_account_value = self.cash + market_value

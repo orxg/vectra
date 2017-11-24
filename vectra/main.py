@@ -6,8 +6,9 @@ Created on Sun Aug 20 20:40:35 2017
 """
 
 # main.py
-import datetime
+import time
 
+from podaci.data_source.mixed_db import MixedDataSource
 from .constants import BACKTEST,PAPER_TRADING
 from .events import EVENT,Event
 from .environment import Environment
@@ -17,7 +18,6 @@ from .core.strategy_loader import StrategyLoader
 from .core.dynamic_universe import DynamicUniverse
 from .core.context import Context
 from .data.data_proxy import DataProxy
-from .data.data_source.podaci_data_source.podaci_data_source import PodaciDataSource
 from .model.analyser import Analyser
 from .model.bar import BarMap
 from .mod import ModHandler
@@ -49,11 +49,12 @@ def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
         report_path
             报告保存地址
     '''
+    t_start = time.time()
     config = Config(config)
     env = Environment(config)
             
     if mode == BACKTEST:
-        MOD_LIST = ['sys_simulation']
+        MOD_LIST = ['sys_simulation','sys_report_analyse']
 
     elif mode == PAPER_TRADING:
         MOD_LIST = ['sys_email_sender','sys_paper_trading']                
@@ -68,29 +69,13 @@ def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
     apis = get_apis()
     scope.update(apis)
     scope = strategy_loader.load(scope)
+
     print 'Loading strategy scope successfully'
     
     #%% 数据源与代理载入环境
-    env.set_data_source(PodaciDataSource())  
+    env.set_data_source(MixedDataSource(env.universe,env.start_date,env.end_date,env.data_mode))  
     env.set_data_proxy(DataProxy(env.data_source,data_mode=data_mode,mode=mode))
     print 'Loading data source & data_proxy successfully'
-    
-    #%% MOD载入环境(事件源,撮合,账户)
-    mod_handler = ModHandler(MOD_LIST)
-    mod_handler.set_env(env)
-    mod_handler.start_up()
-    print 'Loading mods successfully'
-    
-    #%% 动态股票池载入环境
-    dynamic_universe = DynamicUniverse()
-    env.set_dynamic_universe(dynamic_universe)
-    print 'Loading dynamic universe successfully'
-    
-    #%% 记录/分析工具载入环境
-    if report_path is None:
-        pass
-    env.set_analyser(Analyser(env,strategy_name,report_path))
-    print 'Loading analyser successfully'
     
     #%% Strategy对象载入环境
     user_context = Context()
@@ -100,8 +85,25 @@ def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
     strategy = Strategy(env,scope,user_context,bar_map)
     assert strategy is not None
     strategy.initilize()
-    print 'Loading strategy successfully'
+    print 'Loading strategy successfully'     
+      
+    #%% MOD载入环境(事件源,撮合者,账户)
+    mod_handler = ModHandler(MOD_LIST)
+    mod_handler.set_env(env)
+    mod_handler.start_up()
+    print 'Loading mods successfully'
     
+    #%% 动态股票池载入环境
+    dynamic_universe = DynamicUniverse()
+    env.set_dynamic_universe(dynamic_universe)
+    print 'Loading dynamic universe successfully'
+        
+    #%% 记录/分析工具载入环境
+    if report_path is None:
+        pass
+    env.set_analyser(Analyser(env,strategy_name,report_path))
+    print 'Loading analyser successfully'
+        
     #%% 持久化注册(模拟专有)
     if mode == PAPER_TRADING:
         persist_provider = DiskPersistProvider(persist_path)
@@ -123,9 +125,15 @@ def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
     report = env.analyser.report()
     
     print 'Get the report successfully'
+    #%% 策略回测概述
+    env.report_analyser.plot(report)
+    
     #%% 收尾
     mod_handler.tear_down()
     
+    t_end = time.time()
+    if mode == BACKTEST:
+        print 'The backtest cost %.2f seconds'%(t_end - t_start)
     return report
         
         

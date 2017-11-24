@@ -35,7 +35,7 @@ class StrategyLoader():
             dict,装载用户策略的空间,namespace
         '''
         with codecs.open(self.strategy_path,encoding='utf8') as f:
-            source_codes = f.read()
+            source_codes = f.read()            
         try:
             source_codes = source_codes.encode('utf8')
         except:

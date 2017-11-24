@@ -10,7 +10,7 @@ Created on Mon Aug 21 15:25:19 2017
 from .simulation_broker import SimulationBroker
 from .simulation_event_source import SimulationEventSource
 from .simulation_account import SimulationAccount
-from VectorTrader.interface import AbstractMod
+from vectra.interface import AbstractMod
 
 class SimulationMod(AbstractMod):
     def __init__(self):

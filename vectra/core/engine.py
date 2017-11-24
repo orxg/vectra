@@ -6,7 +6,7 @@ Created on Sun Aug 20 14:07:01 2017
 """
 
 # engine.py
-import numba as nb
+
 from ..events import EVENT,Event
 
 PRE_BEFORE_TRADING = Event(EVENT.PRE_BEFORE_TRADING)
@@ -40,10 +40,8 @@ class Engine():
         for event in self.env.event_source.events(start_date,
                                            end_date,
                                            frequency):
-
             self.env.calendar_dt = event.calendar_dt
             self.env.trading_dt = event.trading_dt
-            
             if event.event_type == EVENT.BEFORE_TRADING:
                 self.env.event_bus.publish_event(PRE_BEFORE_TRADING)
                 self.env.event_bus.publish_event(event)

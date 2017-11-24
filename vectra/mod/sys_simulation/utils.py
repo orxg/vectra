@@ -26,7 +26,6 @@ def daily_trading_dt(date,frequency):
     return trading_dt
 
 if __name__ == '__main__':
-    import datetime as dt
     data = daily_trading_dt(dt.datetime(2017,9,13),'20m')
     
 

@@ -6,20 +6,6 @@
 1. 向site-packages中添加VectorTrader路径文件pth.
 2. 安装requirments中的需求
 
-# 当前计划
-## 完成前复权回测系统
-1. sys_simulation 中的 simulation_account,simulation_position,simulation_broker逻辑(done)
-2. order 的 api(done)
-3. podaci 提供底层数据
-4. 按照Main check一遍各个组件是否到位,逻辑是否正确
-
-# 更新完成
-data_proxy
-main
-environment
-simulation_event
-simulation_account
-simulation_position
-simulation_broker
-api
-
+# 问题
+1.初始状态的记录(done)
+2.交易时间对不上(done,unique使用不当)
