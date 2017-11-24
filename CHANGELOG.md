@@ -1,4 +1,8 @@
 # update log
+## 2017-11-24
+1. 单只股票测试通过,修复了多出BUG
+2. 添加了累计收益率做图mod,sys_report_analyse
+
 ## 2017-11-22
 1. 重构了程序,将account,position作为mod移入sys_simulation
 2. 重写了data_proxy,main,environment,simulation_event,simulation_account,simulation_position,simulation_broker,api
