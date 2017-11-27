@@ -17,3 +17,7 @@ out/
 
 # persist
 persist/
+
+# private
+design.xlsx
+handbook.xlsx
