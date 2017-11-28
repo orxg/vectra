@@ -8,15 +8,15 @@ Created on Tue Aug 22 08:33:34 2017
 # run_strategy.py
 
 config = {'base':
-    {'start_date':'20160103',
+    {'start_date':'20160120',
      'end_date':'20170201',
      'frequency':'1d',
      'capital':100000,
-     'universe':['600340']}}
+     'universe':['600340','600066','600660']}}
 
 from vectra import run_file
 
-strategy_path = './test/test_buy_and_hold.py'
+strategy_path = './test/test_moving_average.py'
 #==============================================================================
 # with open(strategy_path,'r') as f:
 #     con = f.readlines()

@@ -6,6 +6,7 @@ Created on Mon Aug 21 10:56:35 2017
 """
 
 # bar.py
+import pandas as pd
 
 from ..events import EVENT
 
@@ -40,7 +41,7 @@ class BarMap():
     def _clear_post_settlement(self,event):
         self._current_data = []
         
-    #%% api
+    #%% 内部api
     def __getitem__(self,ticker):
         return self._data[ticker]
             
@@ -63,47 +64,31 @@ class BarMap():
         num = self.universe.index(ticker)
         return self._data[-1][val_type][num]
     
-    def get_current_day_bar(self,style = 1):
+    #%% 外部api,查询函数,用户使用
+    def get_history(self,attr,n):
         '''
-        获取当日的所有可得bar.主要用于分钟级策略.
+        用户提取属性数据接口。
         
         Parameters
         ----------
-        style
-            返回数据的格式。
-            1为根据属性返回。默认为1.
-            2为根据股票代码返回。
-        Returns
-        ---------
-        dict
-            index
-                 pd.Timestamp
-            columns
-                (open_price,high_price,low_price,close_price,volume,amount)
+        attr
+            提取属性
+            open_price,high_price,low_price,close_price,amount,volume
+        n
+            提取数量
+            
+        Notes
+        -----
+        为了避免未来函数,该接口不能获取当日的bar.
         '''
-        current_data = self._current_data
-        if style == 1:
-            universe = current_data[-1]['universe']
-            date_time = [i['date_time'] for i in current_data]
-            open_price = [i['open_price'] for i in current_data]
-            high_price = [i['high_price'] for i in current_data]
-            low_price = [i['low_price'] for i in current_data]
-            close_price = [i['close_price'] for i in current_data]
-            volume = [i['volume'] for i in current_data]
-            amount = [i['amount'] for i in current_data]
-            
-            return {'universe':universe,
-                    'date_time':date_time,
-                    'open_price':open_price,
-                    'high_price':high_price,
-                    'low_price':low_price,
-                    'close_price':close_price,
-                    'volume':volume,
-                    'amount':amount}
-            
-        elif style == 2:
-            pass
-        return current_data
+        data = self._data[-n-1:-1]
+        if len(data) != 0:
+            trade_date = [_['trade_date'] for _ in data]
+            data_attr = [_[attr] for _ in data]
+            df = pd.DataFrame(data_attr,index = trade_date,columns = self.universe)     
+            return df
+        else:
+            return None
         
                 
          

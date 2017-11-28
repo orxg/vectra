@@ -1,6 +1,11 @@
 # update log
+## 2017-11-28
+1. 修正手续费计算的符号BUG
+2. 通过多只股票buy_and_hold
+3. 通过moving_average
+
 ## 2017-11-24
-1. 单只股票测试通过,修复了多出BUG
+1. 单只股票测试通过,修复了多个BUG
 2. 添加了累计收益率做图mod,sys_report_analyse
 
 ## 2017-11-22

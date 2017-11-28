@@ -13,6 +13,13 @@ order_to(ticker,amount,order_price=None):下单到指定数量,amount正负控�
 order_pct_to(ticker,amount,order_price=None):下单到指定资产比例,amount正负控制方向
 
 # context
+dynamic_universe:当前动态股票池
+universe:股票池
+current_date:datetime,交易当天日期
+account:Account实例对象
+
+# bar_map
+get_history(attr,n):attr为获取的属性，n为往后的交易天数,默认取不到当日
 
 # Account查询方法
 cash:返回当前现金

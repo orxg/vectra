@@ -17,12 +17,16 @@ def before_trading(context):
     context.signal_post_before_trading = 'This is a test'
     
 def handle_bar(context,bar_map):
-    print context.current_date
-    context.flag += 1
-    if not context.fired:
-        for ticker in context.universe:
-            order_pct_to(ticker,0.9)
-        context.fired = True
+    hist = bar_map.get_history('close_price',5)
+    print hist
+#==============================================================================
+#     print context.current_date
+#     context.flag += 1
+#     if not context.fired:
+#         for ticker in context.universe:
+#             order_pct_to(ticker,0.3)
+#         context.fired = True
+#==============================================================================
     
 def after_trading(context):
     context.signal_post_after_trading = 'We have bought the stock'

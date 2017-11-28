@@ -39,7 +39,9 @@ def order(ticker,amount,order_price = None):
         direction = DIRECTION_SHORT
     elif amount > 0:
         direction = DIRECTION_LONG
-        
+    elif amount == 0:
+        return 
+    
     if order_price is None:       
         open_price =  env.bar_map.get_stock_latest_bar_value(ticker,'open_price')
         order_price = open_price
@@ -92,11 +94,10 @@ def order_pct_to(ticker,pct,order_price = None):
     env = Environment.get_instance()
     account_value = env.account.total_account_value
     target_value = account_value * pct 
-    
+
     if order_price is None:       
         open_price =  env.bar_map.get_stock_latest_bar_value(ticker,'open_price')
         order_price = open_price    
-        
     target_amount = target_value / order_price
     order_to(ticker,target_amount,order_price)
     

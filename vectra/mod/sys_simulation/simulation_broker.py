@@ -84,14 +84,14 @@ class SimulationBroker():
                     
                 
             elif direction == DIRECTION_SHORT:
-                tax = amount * order_price * 0.001
-                transfer_fee = int(amount/1000 - 0.001) + 1
-                commission_fee = max(amount * order_price * 0.003,5)
+                tax = abs(amount) * order_price * 0.001
+                transfer_fee = int(abs(amount)/1000 - 0.001) + 1
+                commission_fee = max(abs(amount) * order_price * 0.003,5)
                 transaction_fee = tax + transfer_fee + commission_fee
                 
                 position = self.env.account.get_position(ticker)
                 
-                if amount > position:
+                if abs(amount) > position:
                     reject_event = Event(EVENT.REJECT_ORDER,
                      reason = 'Not enough stocks to sell',
                      order = order)

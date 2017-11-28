@@ -20,7 +20,6 @@ class SimulationEventSource():
         '''
         calendar_days = self.env.data_proxy.get_calendar_days(start_date,
                                                          end_date)
-        print calendar_days
         if frequency[-1] == 'd':
             for date in calendar_days:
                 dt_before_trading = date.replace(hour=0,minute=0)

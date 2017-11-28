@@ -35,14 +35,14 @@ class SimulationPosition():
                               amount * match_price) / (self.position[ind] + amount)
             self.position[ind] += amount
             self.position_market_value[ind] += amount * match_price
-            money = -amount * match_price - transaction_fee
+            money = - amount * match_price - transaction_fee
                         
         if direction == DIRECTION_SHORT:
             self.position_cost[ind] = (self.position_cost[ind] * self.position[ind] - \
-                  amount * match_price) / (self.position[ind] + amount)
-            self.position[ind] -= amount
-            self.position_market_value[ind] -= amount * match_price 
-            money = amount * match_price - transaction_fee       
+                  abs(amount) * match_price) / (self.position[ind] + abs(amount))
+            self.position[ind] -= abs(amount)
+            self.position_market_value[ind] -= abs(amount) * match_price 
+            money = abs(amount) * match_price - transaction_fee       
         return money
     
     def refresh_post_bar(self,close_price):
