@@ -23,7 +23,7 @@ class Order():
             amount
                 数量
             direction
-                方向，买:1,卖-1
+                方向
             order_price
                 出价
         '''
@@ -67,7 +67,7 @@ class FillOrder():
             amount
                 数量
             direction
-                方向，买:1,卖-1
+                方向
             tax
                 税费
             commission_fee

@@ -17,12 +17,6 @@ config = {'base':
 from vectra import run_file
 
 strategy_path = './test/test_moving_average.py'
-#==============================================================================
-# with open(strategy_path,'r') as f:
-#     con = f.readlines()
-#     for each in con:
-#         print each
-#==============================================================================
 report = run_file(config,'test_buy_and_hold',strategy_path)
 
 
