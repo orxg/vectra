@@ -6,7 +6,7 @@ Created on Thu Sep 07 14:48:39 2017
 """
 
 # parse_config.py
-from ..data.data_proxy import DataProxy
+# from ..data.data_proxy import DataProxy
 
 class Config(object):
     
@@ -47,8 +47,19 @@ class Config(object):
         else:
             return None
         
+    @property
+    def source(self):
+        return self.config['source']
+    
+    @property
+    def file_path(self):
+        return self.config['file_path']
+    
     def parse_universe(self):
         universe = self.config['base']['universe']
+        if not isinstance(universe,list):
+            print 'attribute universe must be a list'
+            raise ValueError
         if len(universe) < 1:
             return []
         else:
@@ -57,6 +68,8 @@ class Config(object):
                 pass
             else:
                 self.universe = universe
+                
+    
        
     
         

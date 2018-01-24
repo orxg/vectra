@@ -82,7 +82,7 @@ def order_pct_to(ticker,pct,order_price = None):
     ticker
         标的代码
     pct
-        下单达到的比例(相对于账户总价值),正负号代表方向
+        下单达到的比例(相对于账户总价值)
     order_price
         下单价格,默认为None,采取开盘价
     
@@ -97,8 +97,12 @@ def order_pct_to(ticker,pct,order_price = None):
 
     if order_price is None:       
         open_price =  env.bar_map.get_stock_latest_bar_value(ticker,'open_price')
-        order_price = open_price    
+        order_price = open_price   
+    if order_price == 0:
+        print 'No data available for the trade for %s'%ticker
+        return
     target_amount = target_value / order_price
+    
     order_to(ticker,target_amount,order_price)
     
     

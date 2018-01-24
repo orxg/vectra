@@ -19,6 +19,8 @@ class SimulationPosition():
         self.position_available = np.zeros(len(self.universe))
         self.position_cost = np.zeros(len(self.universe))
         self.position_market_value = np.zeros(len(self.universe))
+        print self.position_market_value
+        self.total_market_value = 0.0
         
     #%% 更新函数
     def refresh_trade(self,fill_order):
@@ -47,7 +49,7 @@ class SimulationPosition():
     
     def refresh_post_bar(self,close_price):
         self.position_market_value = close_price * self.position
-        self.total_account_value = self.position_market_value.sum()
+        self.total_market_value = self.position_market_value.sum()
     
     def refresh_settlement(self):
         self.position_available = copy.copy(self.position)
@@ -55,7 +57,7 @@ class SimulationPosition():
     #%% 查询
     @property
     def total_market_value(self):
-        return self.position_market_value.sum()
+        return self.total_market_value
                       
     def get_position(self,ticker):
         ind = np.where(self.universe == ticker)[0][0]

@@ -12,12 +12,14 @@ config = {'base':
      'end_date':'20170201',
      'frequency':'1d',
      'capital':100000,
-     'universe':['600340','600066','600660']}}
+     'universe':['600340','600066','600660']},
+     'source':'sql',
+     'file_path':''}
 
 from vectra import run_file
 
 strategy_path = './test/test_moving_average.py'
-report = run_file(config,'test_buy_and_hold',strategy_path)
+report = run_file(config,'test_buy_and_hold',strategy_path,report_path = 'G:\\Work_ldh\\PM\\F1\\bt')
 
 
 

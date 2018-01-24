@@ -9,7 +9,7 @@ Created on Sun Aug 20 20:40:35 2017
 import time
 
 from podaci.data_source.mixed_db import MixedDataSource
-from .constants import BACKTEST,PAPER_TRADING
+from podaci.data_source.disk_source import DiskDataSource
 from .events import EVENT,Event
 from .environment import Environment
 from .core.engine import Engine
@@ -26,11 +26,13 @@ from .utils.create_base_scope import create_base_scope
 from .utils.persist_provider import DiskPersistProvider
 from .utils.persist_helper import PersistHelper
 from .api.helper import get_apis
+from .constants import (BACKTEST,PAPER_TRADING,
+                        DATA_SOURCE_EXCEL,DATA_SOURCE_SQL)
 
 def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
                   persist_path = None,report_path = None):
     '''
-    主程序。启动回测/模拟/实盘。
+    主程序。启动回测。
     
     Parameters
     ----------
@@ -57,7 +59,7 @@ def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
         MOD_LIST = ['sys_simulation','sys_report_analyse']
 
     elif mode == PAPER_TRADING:
-        MOD_LIST = ['sys_email_sender','sys_paper_trading']                
+        MOD_LIST = ['sys_email_sender','sys_paper_trading']            
     
     #%% 数据模式与运行模式
     env.data_mode = data_mode
@@ -73,8 +75,14 @@ def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
     print 'Loading strategy scope successfully'
     
     #%% 数据源与代理载入环境
-    env.set_data_source(MixedDataSource(env.universe,env.start_date,env.end_date,env.data_mode))  
-    env.set_data_proxy(DataProxy(env.data_source,data_mode=data_mode,mode=mode))
+    if config.source == DATA_SOURCE_EXCEL:
+        env.set_data_source(DiskDataSource(config.universe,config.file_path))
+    elif config.source == DATA_SOURCE_SQL:
+        env.set_data_source(MixedDataSource(env.universe,env.start_date,
+                                            env.end_date,env.data_mode))  
+    env.set_data_proxy(DataProxy(env.data_source,
+                                 data_mode=data_mode,
+                                 mode=mode))
     print 'Loading data source & data_proxy successfully'
     
     #%% Strategy对象载入环境

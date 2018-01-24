@@ -7,6 +7,7 @@ Created on Sun Aug 20 14:11:54 2017
 
 # account.py
 import pickle
+import pandas as pd
 from .simulation_position import SimulationPosition
 from vectra.events import EVENT
 from vectra.constants import HARD_MODE
@@ -45,7 +46,6 @@ class SimulationAccount():
         self.position.refresh_post_bar(close_price)
         market_value = self.position.total_market_value
         self.total_account_value = self.cash + market_value
-
         
     def _refresh_settlement(self,event):
         '''
@@ -75,6 +75,14 @@ class SimulationAccount():
     def get_market_value(self,ticker):
         return self.position.get_market_value(ticker)
     
+    def get_weight(self):
+        universe = self.position.universe
+        market_value = self.position.position_market_value
+        portfolio_value = self.total_account_value
+        weight = pd.Series(market_value / portfolio_value,
+                           index = universe)
+        return weight
+        
     #%% 持久化
     def get_state(self):
         state_data = {'cash':self.cash,

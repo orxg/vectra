@@ -1,4 +1,13 @@
 # update log
+## 2018-01-24
+1. 支持Excel数据源
+2. 增加数据源格式选择配置选项
+3. 增加account方法get_weight,支持获取当前持仓权重
+4. 通过FOF轮动换仓基于Excel数据源的策略测试
+5. 加强order_pct_to的容错率
+6. 更新APIs.md的相关说明
+
+
 ## 2017-11-28
 1. 修正手续费计算的符号BUG
 2. 通过多只股票buy_and_hold
