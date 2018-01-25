@@ -1,0 +1,42 @@
+EVENT.PENDING_NEW_ORDER_PASS
+<bound method Analyser._collect_new_order of <vectra.model.analyser.Analyser instance at 0x000000000EDAF288>>
+     
+EVENT.SETTLEMENT
+<bound method SimulationAccount._refresh_settlement of <sys_simulation.simulation_account.SimulationAccount instance at 0x000000000EDAF3C8>>
+<bound method Analyser._record_daily_settlement of <vectra.model.analyser.Analyser instance at 0x000000000EDAF288>>
+     
+EVENT.BAR
+<bound method Strategy.handle_bar of <vectra.core.strategy.Strategy instance at 0x000000000DBFD748>>
+<bound method SimulationBroker._match_on_bar of <sys_simulation.simulation_broker.SimulationBroker instance at 0x000000000EDAF048>>
+     
+EVENT.POST_BAR
+<bound method SimulationAccount._refresh_post_bar of <sys_simulation.simulation_account.SimulationAccount instance at 0x000000000EDAF3C8>>
+<bound method Analyser._record_post_bar of <vectra.model.analyser.Analyser instance at 0x000000000EDAF288>>
+     
+EVENT.PENDING_NEW_ORDER
+<bound method SimulationBroker._collect_order of <sys_simulation.simulation_broker.SimulationBroker instance at 0x000000000EDAF048>>
+     
+EVENT.TRADE
+<bound method SimulationAccount._handle_fill_order of <sys_simulation.simulation_account.SimulationAccount instance at 0x000000000EDAF3C8>>
+<bound method Analyser._collect_fill_order of <vectra.model.analyser.Analyser instance at 0x000000000EDAF288>>
+     
+EVENT.REJECT_ORDER
+<bound method Analyser._collect_rejected_order of <vectra.model.analyser.Analyser instance at 0x000000000EDAF288>>
+     
+EVENT.SYSTEM_INITILIZE
+<bound method Analyser._system_initilize of <vectra.model.analyser.Analyser instance at 0x000000000EDAF288>>
+     
+EVENT.PRE_BAR
+<bound method BarMap._update_pre_bar of A data structure used as the router.>
+     
+EVENT.PRE_BEFORE_TRADING
+<bound method DynamicUniverse._refresh_pre_before_trading of <vectra.core.dynamic_universe.DynamicUniverse instance at 0x000000000EDAFA88>>
+     
+EVENT.POST_SETTLEMENT
+<bound method BarMap._clear_post_settlement of A data structure used as the router.>
+     
+EVENT.KILL_ORDER_PASS
+<bound method Analyser._collect_kill_order of <vectra.model.analyser.Analyser instance at 0x000000000EDAF288>>
+     
+EVENT.KILL_ORDER
+<bound method SimulationBroker._handle_kill_order of <sys_simulation.simulation_broker.SimulationBroker instance at 0x000000000EDAF048>>

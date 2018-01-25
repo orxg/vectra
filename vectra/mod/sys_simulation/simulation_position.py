@@ -19,7 +19,6 @@ class SimulationPosition():
         self.position_available = np.zeros(len(self.universe))
         self.position_cost = np.zeros(len(self.universe))
         self.position_market_value = np.zeros(len(self.universe))
-        print self.position_market_value
         self.total_market_value = 0.0
         
     #%% 更新函数

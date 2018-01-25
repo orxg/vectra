@@ -7,6 +7,7 @@ Created on Sun Aug 20 20:40:35 2017
 
 # main.py
 import time
+import pandas as pd
 
 from podaci.data_source.mixed_db import MixedDataSource
 from podaci.data_source.disk_source import DiskDataSource
@@ -30,7 +31,8 @@ from .constants import (BACKTEST,PAPER_TRADING,
                         DATA_SOURCE_EXCEL,DATA_SOURCE_SQL)
 
 def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
-                  persist_path = None,report_path = None):
+                  persist_path = None,report_path = None,if_test = False,
+                  log_path = None):
     '''
     主程序。启动回测。
     
@@ -50,7 +52,9 @@ def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
             持久化路径,模拟专有
         report_path
             报告保存地址
-    '''
+        if_test
+            bool,是否为测试,默认为False
+    '''        
     t_start = time.time()
     config = Config(config)
     env = Environment(config)
@@ -124,6 +128,14 @@ def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
         persist_helper.restore()
         print 'Restore previous strategy status successfully'
         
+    #%% 检测系统是否正常设置
+    if if_test:
+        print 'THIS IS THE TEST'
+        for key,value in env.event_bus.event_bus.items():
+            print key
+            for _ in value:
+                print _
+            print '     '
     #%% 启动引擎
     print 'The system engine is going to run right now...'
     env.event_bus.publish_event(Event(EVENT.SYSTEM_INITILIZE))
@@ -131,7 +143,6 @@ def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
 
     #%% 获取报告
     report = env.analyser.report()
-    
     print 'Get the report successfully'
     #%% 策略回测概述
     env.report_analyser.plot(report)

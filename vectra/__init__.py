@@ -6,6 +6,7 @@ Created on Tue Aug 22 14:00:35 2017
 """
 
 # __init__.py
+import logging
 import yaml
 import os
 
@@ -18,7 +19,8 @@ with open(etc_path,'r') as f:
     etc = yaml.load(f)
 
 def run_file(config,strategy_name,strategy_path,data_mode = 'e',mode = 'b',
-             persist_path = None,report_path = None):
+             persist_path = None,report_path = None,if_test = False,
+             log_path = None):
     '''
     Parameters
     ----------
@@ -36,7 +38,14 @@ def run_file(config,strategy_name,strategy_path,data_mode = 'e',mode = 'b',
             在模拟状态下必须给出持久化路径
         report_path
             回测结果保存地址
+        if_test
+            bool,是否是系统测试
+        log_path
+            系统日志路径
     '''
+    if log_path is not None:
+        logging.basicConfig(filename = log_path,level = logging.DEBUG)
+        print 'The logging is ok'
     if data_mode == 'e':
         data_mode = EASY_MODE
     elif data_mode == 'h':
@@ -55,6 +64,6 @@ def run_file(config,strategy_name,strategy_path,data_mode = 'e',mode = 'b',
                 
     from .main import all_system_go
     return all_system_go(config,strategy_name,strategy_path,data_mode,mode,
-                         persist_path,report_path)
+                         persist_path,report_path,if_test=if_test)
     
 

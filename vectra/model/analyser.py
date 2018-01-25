@@ -6,10 +6,13 @@ Created on Mon Aug 21 10:52:45 2017
 """
 
 # analyser.py
+import copy
+import logging
 import datetime as dt
 import pickle
 from ..events import EVENT
 
+# logging.basicConfig(filename = 'G:\\Work_ldh\\Backtest\\vectra\debuglog.log',level = logging.DEBUG)
 
 class Analyser():
 
@@ -25,7 +28,8 @@ class Analyser():
         self.daily_portfolio_value = []
         self.position = []
         self.daily_position = []
-                
+        self.daily_weight = []
+        
         self.history_orders = []
         self.history_fill_orders = []
         self.history_rejected_orders = []
@@ -49,6 +53,7 @@ class Analyser():
                 'daily_portfolio_value':self.daily_portfolio_value,
                 'position':self.position,
                 'daily_position':self.daily_position,
+                'daily_weight':self.daily_weight,
                 'history_orders':self.history_orders,
                 'history_fill_orders':self.history_fill_orders,
                 'history_rejected_orders':self.history_rejected_orders,
@@ -64,6 +69,7 @@ class Analyser():
         self.daily_portfolio_value = state['daily_portfolio_value']
         self.position = state['position']
         self.daily_position = state['daily_position']
+        self.daily_weight = state['daily_weight']
         self.history_orders = state['history_orders']
         self.history_fill_orders = state['history_fill_orders']
         self.history_rejected_orders = state['history_rejected_orders']
@@ -82,8 +88,9 @@ class Analyser():
         self.portfolio_value.append([calendar_dt,trading_dt,
                                      account.total_account_value])
         self.position.append([calendar_dt,trading_dt,
-                              account.position.position]) 
-      
+                              copy.copy(account.position.position)]) 
+        # logging.info(str(calendar_dt) + '    ' + str(self.position[0][2].sum()))
+
     def _record_post_bar(self,event):
         calendar_dt = self.env.calendar_dt
         trading_dt = self.env.trading_dt
@@ -93,8 +100,9 @@ class Analyser():
         self.portfolio_value.append([calendar_dt,trading_dt,
                                      account.total_account_value])
         self.position.append([calendar_dt,trading_dt,
-                              account.position.position])
-    
+                              copy.copy(account.position.position)])
+        logging.info(str(calendar_dt) + '    ' + str(self.position[0][2].sum()))
+        
     def _record_daily_settlement(self,event):
         calendar_dt = self.env.calendar_dt
         trading_dt = self.env.trading_dt
@@ -104,8 +112,10 @@ class Analyser():
         self.daily_portfolio_value.append([calendar_dt,trading_dt,
                                      account.total_account_value])
         self.daily_position.append([calendar_dt,trading_dt,
-                              account.position.position])
-            
+                              copy.copy(account.position.position)])
+        self.daily_weight.append([calendar_dt,trading_dt,
+                                  account.get_weight()])
+    
     def _collect_new_order(self,event):
         new_order = event.order
         order_state = new_order.get_state()

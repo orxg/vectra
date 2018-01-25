@@ -10,3 +10,8 @@
 要求Excel数据表格式如下
 列为trade\_date,open\_price,high\_price,low\_price,close\_price,amount,volume,trade\_code
 trade\_date时间格式要求能够被pd.read_excel识别。
+
+# Some Features
+## Matching Regime
+1. 卖出下单数量超过持仓数量,作为清仓处理
+2. 买入下单金额(含手续费)超出可用现金,直接拒单

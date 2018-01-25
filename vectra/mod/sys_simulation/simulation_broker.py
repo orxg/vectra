@@ -92,24 +92,27 @@ class SimulationBroker():
                 position = self.env.account.get_position(ticker)
                 
                 if abs(amount) > position:
-                    reject_event = Event(EVENT.REJECT_ORDER,
-                     reason = 'Not enough stocks to sell',
-                     order = order)
-                    self.env.event_bus.publish_event(reject_event)
-                    return                    
+                    amount = - position
+#==============================================================================
+#                     reject_event = Event(EVENT.REJECT_ORDER,
+#                      reason = 'Not enough stocks to sell',
+#                      order = order)
+#                     self.env.event_bus.publish_event(reject_event)
+#                     return                    
+#==============================================================================
             
             # 市场检验
             high_price = self.env.bar_map.get_stock_latest_bar_value(ticker,'high_price')
             low_price = self.env.bar_map.get_stock_latest_bar_value(ticker,'low_price')
             total_amount = self.env.bar_map.get_stock_latest_bar_value(ticker,'amount')
             
-            if order_price >= high_price:
+            if order_price > high_price:
                 reject_event = Event(EVENT.REJECT_ORDER,
                  reason = 'order price is too high',
                  order = order)
                 self.env.event_bus.publish_event(reject_event)  
                 return
-            if order_price <= low_price:
+            if order_price < low_price:
                 reject_event = Event(EVENT.REJECT_ORDER,
                  reason = 'order price is too low',
                  order = order)
