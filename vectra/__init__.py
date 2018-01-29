@@ -45,7 +45,7 @@ def run_file(config,strategy_name,strategy_path,data_mode = 'e',mode = 'b',
     '''
     if log_path is not None:
         logging.basicConfig(filename = log_path,level = logging.DEBUG)
-        print 'The logging is ok'
+        
     if data_mode == 'e':
         data_mode = EASY_MODE
     elif data_mode == 'h':

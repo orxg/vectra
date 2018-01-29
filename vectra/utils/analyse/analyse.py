@@ -91,9 +91,9 @@ def visualize_report(report,save_path):
     order_record.to_excel(os.path.join(save_path,'order_record.xlsx'))
     fill_order_record.to_excel(os.path.join(save_path,'fill_order_record.xlsx'))
     reject_order_record.to_excel(os.path.join(save_path,'reject_order_record.xlsx'))
-    
+    weight_record.to_excel(os.path.join(save_path,'weight_record.xlsx'))
     # 返回
-    return holding_record,order_record,fill_order_record,reject_order_record
+    return holding_record,order_record,fill_order_record,reject_order_record,weight_record
 
 def describe(report):
     '''
@@ -125,5 +125,8 @@ def describe(report):
 if __name__ == '__main__':
     file_path = 'G:\\Work_ldh\\PM\\F1\\bt\\fof_f1_2.pkl'
     report = load_report(file_path)
-    plot(report)
-    a = describe(report)
+#==============================================================================
+#     plot(report)
+#     a = describe(report)
+#==============================================================================
+    visualize_report(report,'G:\\Work_ldh\\PM\\F1\\bt2')

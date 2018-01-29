@@ -7,7 +7,6 @@ Created on Sun Aug 20 20:40:35 2017
 
 # main.py
 import time
-import pandas as pd
 
 from podaci.data_source.mixed_db import MixedDataSource
 from podaci.data_source.disk_source import DiskDataSource
@@ -80,7 +79,7 @@ def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
     
     #%% 数据源与代理载入环境
     if config.source == DATA_SOURCE_EXCEL:
-        env.set_data_source(DiskDataSource(config.universe,config.file_path))
+        env.set_data_source(DiskDataSource(config,config.universe,config.file_path))
     elif config.source == DATA_SOURCE_SQL:
         env.set_data_source(MixedDataSource(env.universe,env.start_date,
                                             env.end_date,env.data_mode))  

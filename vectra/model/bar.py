@@ -6,6 +6,7 @@ Created on Mon Aug 21 10:56:35 2017
 """
 
 # bar.py
+import logging
 import pandas as pd
 
 from ..events import EVENT
@@ -33,6 +34,7 @@ class BarMap():
  
     #%% 监听函数
     def _update_pre_bar(self,event):
+        logging.info('UPDATE_PRE_BAR WHEN %s'%(self.env.calendar_dt))
         data_proxy = self.env.data_proxy
         bar = data_proxy.get_bar()
         self._data.append(bar)
@@ -54,12 +56,32 @@ class BarMap():
     def get_latest_bar_value(self,val_type = 'close_price'):
         '''
         获取最近的bar的某个属性值。
+        
+        Parameters
+        -----------
+        val_type
+            bar类型,open_price,high_price,low_price,close_price,volume,amount
+        
+        Returns
+        -------
+        narray
         '''
         return self._data[-1][val_type]    
     
     def get_stock_latest_bar_value(self,ticker,val_type = 'close_price'):
         '''
-        获取最近的某只股票的bar的某个属性值。
+        获取最近的bar的某个属性值。
+        
+        Parameters
+        -----------
+        ticker
+            str,标的代码
+        val_type
+            bar类型,open_price,high_price,low_price,close_price,volume,amount
+        
+        Returns
+        -------
+        float-like
         '''
         num = self.universe.index(ticker)
         return self._data[-1][val_type][num]

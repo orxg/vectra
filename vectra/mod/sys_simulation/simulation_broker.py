@@ -6,6 +6,7 @@ Created on Mon Aug 21 13:23:37 2017
 """
 
 # simulation_broker.py
+import logging
 
 from vectra.constants import DIRECTION_LONG,DIRECTION_SHORT
 from vectra.events import EVENT,Event
@@ -33,7 +34,10 @@ class SimulationBroker():
             self.env.event_bus.publish_event(Event(EVENT.REJECT_ORDER,
                                              order = order,reason = 'Can not trade'))            
     def _match_on_bar(self,event):
+        logging.info('MATCH ON BAR WHEN %s'%(self.env.calendar_dt))
         self._match()
+        if len(self.blotter) != 0:
+            logging.info('WARNING: THE BLOTTER IS NOT CLEAR ON %s'%(self.env.calendar_dt))
              
     def _handle_kill_order(self,event):
         '''
@@ -80,7 +84,7 @@ class SimulationBroker():
                      reason = 'Not enough cash',
                      order = order)
                     self.env.event_bus.publish_event(reject_event)
-                    return
+                    continue
                     
                 
             elif direction == DIRECTION_SHORT:
@@ -102,28 +106,36 @@ class SimulationBroker():
 #==============================================================================
             
             # 市场检验
+            open_price = self.env.bar_map.get_stock_latest_bar_value(ticker,'open_price')
+            try:
+                assert open_price == order_price
+            except:
+                logging.info('WARNING: THE PRICE MATCH ERROR ticker:%s,trading_dt:%s,order_price:%s,open_price:%s'%(ticker,
+                                                                                                  trading_dt,
+                                                                                                  order_price,
+                                                                                                  open_price))
             high_price = self.env.bar_map.get_stock_latest_bar_value(ticker,'high_price')
             low_price = self.env.bar_map.get_stock_latest_bar_value(ticker,'low_price')
-            total_amount = self.env.bar_map.get_stock_latest_bar_value(ticker,'amount')
+            total_amount = self.env.bar_map.get_stock_latest_bar_value(ticker,'volume')
             
             if order_price > high_price:
                 reject_event = Event(EVENT.REJECT_ORDER,
                  reason = 'order price is too high',
                  order = order)
                 self.env.event_bus.publish_event(reject_event)  
-                return
+                continue
             if order_price < low_price:
                 reject_event = Event(EVENT.REJECT_ORDER,
                  reason = 'order price is too low',
                  order = order)
                 self.env.event_bus.publish_event(reject_event)
-                return
+                continue
             if amount >= total_amount:
                 reject_event = Event(EVENT.REJECT_ORDER,
                  reason = 'order amount is too much',
                  order = order)
                 self.env.event_bus.publish_event(reject_event) 
-                return
+                continue
                 
             # 生成交易订单
             fill_order_obj = FillOrder(calendar_dt,trading_dt,

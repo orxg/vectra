@@ -7,6 +7,8 @@ Created on Sun Aug 20 14:12:48 2017
 
 # data_proxy.py
 
+import logging
+
 from ..constants import BACKTEST
 from ..environment import Environment
 from ..utils.convertor import array_2_generator
@@ -94,6 +96,7 @@ class DataProxy():
             含有各个属性的字典  
        
         '''
+        env = Environment.get_instance()
         if self.mode == BACKTEST:
             trade_date = next(self._trade_date)
             open_price = next(self._open_price)
@@ -111,6 +114,8 @@ class DataProxy():
                    'close_price':close_price,
                    'volume':volume,
                    'amount':amount}
+            logging.info('THIS IS A CALL FOR GET_BAR() WHEN %s'%(env.calendar_dt) + \
+                         'THE DATA DATE IS %s'%(trade_date))
             return bar
         
         

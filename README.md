@@ -7,9 +7,11 @@
 2. 安装requirments中的需求
 
 # About Excel format data source
-要求Excel数据表格式如下
-列为trade\_date,open\_price,high\_price,low\_price,close\_price,amount,volume,trade\_code
-trade\_date时间格式要求能够被pd.read_excel识别。
+要求Excel数据如下
+1. 列为trade\_date,open\_price,high\_price,low\_price,close\_price,amount,volume,trade\_code
+2. trade\_date时间格式要求能够被pd.read_excel识别。
+3. volume为成交量股数,amount为成交金额,单位是元.但是,在策略当中,下单数量用参数amount代表.
+4. 无交易数据的处理: 采用空值
 
 # Some Features
 ## Matching Regime

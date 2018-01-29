@@ -13,6 +13,8 @@ __all__ = [
        'order_pct_to'
        ]
 
+import logging
+
 from ..constants import DIRECTION_LONG,DIRECTION_SHORT
 from ..events import EVENT,Event
 from ..environment import Environment
@@ -53,6 +55,8 @@ def order(ticker,amount,order_price = None):
                         order = order_obj)
     
     env.event_bus.publish_event(order_event)
+    logging.info('ORDER.CODE:{ticker},DATE:{date}'.format(ticker = ticker,
+                 date = env.bar_map._data[-1]['trade_date']))
     return order_obj
     
 def order_to(ticker,amount,order_price = None):
