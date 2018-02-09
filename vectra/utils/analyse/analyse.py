@@ -125,8 +125,8 @@ def describe(report):
 if __name__ == '__main__':
     file_path = 'G:\\Work_ldh\\PM\\F1\\bt\\fof_f1_2.pkl'
     report = load_report(file_path)
+    plot(report)
 #==============================================================================
-#     plot(report)
 #     a = describe(report)
+#     visualize_report(report,'G:\\Work_ldh\\PM\\F1\\bt2')
 #==============================================================================
-    visualize_report(report,'G:\\Work_ldh\\PM\\F1\\bt2')
