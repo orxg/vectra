@@ -31,7 +31,7 @@ from .constants import (BACKTEST,PAPER_TRADING,
 
 def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
                   persist_path = None,report_path = None,if_test = False,
-                  log_path = None):
+                  log_path = None,weight_path = None):
     '''
     主程序。启动回测。
     
@@ -53,6 +53,8 @@ def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
             报告保存地址
         if_test
             bool,是否为测试,默认为False
+        weight_path
+            str,仓位数据所在文件地址,默认为None
     '''        
     t_start = time.time()
     config = Config(config)
@@ -73,6 +75,7 @@ def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
     strategy_loader = StrategyLoader(strategy_path)
     apis = get_apis()
     scope.update(apis)
+    
     scope = strategy_loader.load(scope)
 
     print 'Loading strategy scope successfully'
@@ -90,6 +93,8 @@ def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
     
     #%% Strategy对象载入环境
     user_context = Context()
+    if weight_path is not None:
+        user_context.load_weight(weight_path)
     env.set_context(user_context)
     bar_map = BarMap(env)
     env.set_bar_map(bar_map)

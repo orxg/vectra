@@ -18,24 +18,6 @@ class DataProxy():
     对不同类型的data_source的封装。计划支持不同模式下的代理。
     对于回测/模拟/实盘实现一套系统内部的数据结构，并定义接口。
     对于研究而言，实现以DataFrame为基准的数据结构的接口。
-    
-    这样的好处在于DataSource只需要实现DataFrame数据类型。
-    DataProxy负责对DataFrame数据类型进行加工得到定义的数据类型。
-        
-    20170926
-    ---------
-        向量化获取数据、向量化底层处理。
-        
-    20170901
-    ---------
-        采用不复权数据进行回测。        
-    20170828
-    ---------
-        将回测数据一次性转换成bar_list,并构造成生成器。这样，
-        在每次post bar后生成当前bar对象,bar_map通过get_bar方法取得对应的bar.        
-    20170825
-    ----------
-        创建MixedDataSource集成所有可得数据源。作为默认数据源。
     '''
     #%% 初始化data_proxy对象
     def __init__(self,data_source,data_mode,mode):

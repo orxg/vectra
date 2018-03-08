@@ -4,8 +4,8 @@ config = {'base':
      'end_date':'20200101',
      'capital':10000,
      'frequency':'1d',
-     'universe':['000001']}
-	 'source':'excel'
+     'universe':['000001']},
+	 'source':'excel',
 	 'file_path':''}
 	 
 ## 注意

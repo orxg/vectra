@@ -8,7 +8,7 @@ Created on Mon Aug 21 11:18:32 2017
 # context.py
 import six
 import pickle
-
+import pandas as pd
 from ..environment import Environment
 
 class Context():
@@ -18,7 +18,12 @@ class Context():
     def __init__(self):
         self.signal_post_before_trading = None # 盘前信息
         self.signal_post_after_trading = None # 盘后信息
-      
+        self.weight_map = None
+        
+    def load_weight(self,weight_path):
+        self.weight_map = pd.read_excel(weight_path,
+                                        dtype = {'trade_date':str})
+        self.weight_map = self.weight_map.set_index('trade_date')
     #%% 持久化
     def get_state(self):
         state_data = {}

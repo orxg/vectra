@@ -1,4 +1,9 @@
 # update log
+## 2018-03-08
+1. 今天妇女节
+2. 增加基于仓位Excel数据源的回测功能run_weight
+3. 修正基于Excel进行回测时数据读取的问题
+
 ## 2018-01-29
 1. 优化Excel数据源的正确性
 2. 在采用Excel数据源的情况下,start_date,end_date参数从无效改为有效

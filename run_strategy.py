@@ -19,7 +19,10 @@ config = {'base':
 from vectra import run_file
 
 strategy_path = './test/test_moving_average.py'
-report = run_file(config,'test_buy_and_hold',strategy_path,report_path = 'G:\\Work_ldh\\PM\\F1\\bt')
+report = run_file(config,
+'test_buy_and_hold',
+strategy_path,
+report_path = 'G:\\Work_ldh\\PM\\F1\\bt')
 
 
 
