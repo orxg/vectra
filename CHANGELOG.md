@@ -1,4 +1,7 @@
 # update log
+## 2018-03-09
+1. 添加累计仓位图函数plot_history_weight,默认回测结束后绘出
+
 ## 2018-03-08
 1. 今天妇女节
 2. 增加基于仓位Excel数据源的回测功能run_weight

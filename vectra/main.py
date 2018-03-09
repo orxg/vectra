@@ -150,7 +150,7 @@ def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
     print 'Get the report successfully'
     #%% 策略回测概述
     env.report_analyser.plot(report)
-    
+    env.report_analyser.plot_history_weight(report)
     #%% 收尾
     mod_handler.tear_down()
     

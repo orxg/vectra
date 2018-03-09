@@ -14,9 +14,7 @@ def before_trading(context):
     pass
 
 def handle_bar(context,bar_map):
-    current_date = context.current_date.strftime('%Y%m%d')
-#    print current_date
-    
+    current_date = context.current_date.strftime('%Y%m%d')    
     try:
         target_weight = context.weight_map.loc[current_date]
     except:
