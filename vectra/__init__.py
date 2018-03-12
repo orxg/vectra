@@ -20,28 +20,30 @@ with open(etc_path,'r') as f:
 
 def run_file(config,strategy_name,strategy_path,data_mode = 'e',mode = 'b',
              persist_path = None,report_path = None,if_test = False,
-             log_path = None):
+             log_path = None,verbose = False):
     '''
     Parameters
     ----------
-        config
-            用户策略配置
-        strategy_name
-            策略名称
-        strategy_path
-            策略路径
-        mode
-            模式 'b','p','r',支持回测'b'和模拟'p'
-        data_mode
-            数据模式,'e'前复权,'h'不复权
-        persist_path
-            在模拟状态下必须给出持久化路径
-        report_path
-            回测结果保存地址
-        if_test
-            bool,是否是系统测试
-        log_path
-            系统日志路径
+    config
+        用户策略配置
+    strategy_name
+        策略名称
+    strategy_path
+        策略路径
+    mode
+        模式 'b','p','r',支持回测'b'和模拟'p'
+    data_mode
+        数据模式,'e'前复权,'h'不复权
+    persist_path
+        在模拟状态下必须给出持久化路径
+    report_path
+        回测结果保存地址
+    if_test
+        bool,是否是系统测试
+    log_path
+        系统日志路径
+    verbose
+        bool,是否输出其他信息
     '''
     if log_path is not None:
         logging.basicConfig(filename = log_path,level = logging.DEBUG)
@@ -64,11 +66,12 @@ def run_file(config,strategy_name,strategy_path,data_mode = 'e',mode = 'b',
                 
     from .main import all_system_go
     return all_system_go(config,strategy_name,strategy_path,data_mode,mode,
-                         persist_path,report_path,if_test=if_test)
+                         persist_path,report_path,if_test=if_test,
+                         verbose = verbose)
     
 def run_weight(config,strategy_name,weight_path,data_mode = 'e',mode = 'b',
              persist_path = None,report_path = None,if_test = False,
-             log_path = None):
+             log_path = None,verbose = False):
     '''
     Run the strategy based on the weight data.
     
@@ -92,6 +95,8 @@ def run_weight(config,strategy_name,weight_path,data_mode = 'e',mode = 'b',
         bool,是否是系统测试
     log_path
         系统日志路径
+    verbose
+        bool,是否输出其他信息
     '''
     if log_path is not None:
         logging.basicConfig(filename = log_path,level = logging.DEBUG)
@@ -117,4 +122,4 @@ def run_weight(config,strategy_name,weight_path,data_mode = 'e',mode = 'b',
     from .main import all_system_go
     return all_system_go(config,strategy_name,strategy_path,data_mode,mode,
                          persist_path,report_path,if_test=if_test,
-                         weight_path = weight_path)
+                         weight_path = weight_path,verbose = verbose)

@@ -26,24 +26,24 @@ class SimulationPosition():
         ticker = fill_order.ticker
         direction = fill_order.direction
         match_price = fill_order.match_price
-        amount = fill_order.amount
+        match_amount = fill_order.match_amount
         transaction_fee = fill_order.transaction_fee
         
         ind = np.where(self.universe == ticker)[0][0]
         
         if direction == DIRECTION_LONG:
             self.position_cost[ind] = (self.position_cost[ind] * self.position[ind] + \
-                              amount * match_price) / (self.position[ind] + amount)
-            self.position[ind] += amount
-            self.position_market_value[ind] += amount * match_price
-            money = - amount * match_price - transaction_fee
+                              match_amount * match_price) / (self.position[ind] + match_amount)
+            self.position[ind] += match_amount
+            self.position_market_value[ind] += match_amount * match_price
+            money = - match_amount * match_price - transaction_fee
                         
         if direction == DIRECTION_SHORT:
             self.position_cost[ind] = (self.position_cost[ind] * self.position[ind] - \
-                  abs(amount) * match_price) / (self.position[ind] + abs(amount))
-            self.position[ind] -= abs(amount)
-            self.position_market_value[ind] -= abs(amount) * match_price 
-            money = abs(amount) * match_price - transaction_fee       
+                  abs(match_amount) * match_price) / (self.position[ind] + abs(match_amount))
+            self.position[ind] -= abs(match_amount)
+            self.position_market_value[ind] -= abs(match_amount) * match_price 
+            money = abs(match_amount) * match_price - transaction_fee       
         return money
     
     def refresh_post_bar(self,close_price):

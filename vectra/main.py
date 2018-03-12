@@ -31,7 +31,7 @@ from .constants import (BACKTEST,PAPER_TRADING,
 
 def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
                   persist_path = None,report_path = None,if_test = False,
-                  log_path = None,weight_path = None):
+                  log_path = None,weight_path = None,verbose = False):
     '''
     主程序。启动回测。
     
@@ -55,6 +55,8 @@ def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
             bool,是否为测试,默认为False
         weight_path
             str,仓位数据所在文件地址,默认为None
+        verbose
+            bool,是否输出除累计收益率图外的其他信息
     '''        
     t_start = time.time()
     config = Config(config)
@@ -150,7 +152,9 @@ def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
     print 'Get the report successfully'
     #%% 策略回测概述
     env.report_analyser.plot(report)
-    env.report_analyser.plot_history_weight(report)
+    
+    if verbose = True:
+        env.report_analyser.plot_history_weight(report)
     #%% 收尾
     mod_handler.tear_down()
     

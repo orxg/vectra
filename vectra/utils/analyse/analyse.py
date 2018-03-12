@@ -15,6 +15,8 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
 from color_names import color_names
 
+from vectra.constants import ORDER_STATUS
+
 def load_report(file_path):
     '''
     读取报告.
@@ -68,12 +70,41 @@ def visualize_report(report,save_path = None):
         
     Returns
     --------
-    Tuple 结果DataFrame
+    Tuple(order_detail,account_detail) DataFrame
     '''
+    
+    # 订单细节
+    history_fill_orders = report['history_fill_orders']
+    history_rejected_orders = report['history_rejected_orders']
+    history_fill_orders = pd.DataFrame.from_dict(history_fill_orders)
+    history_rejected_orders = pd.DataFrame.from_dict(history_rejected_orders)
+    
+    history_orders = pd.concat([history_fill_orders,history_rejected_orders])
+    history_orders = history_orders.set_index('order_id')
+    history_orders = history_orders.sort_index(ascending = True)
+    history_orders = history_orders.reindex(columns = ['calendar_dt',
+                                                       'trading_dt',
+                                      'ticker','amount','direction',
+                                      'order_price','order_state',
+                                      'fill_dt','match_price','match_amount',
+                                      'reject_reason','transaction_fee',
+                                      'tax','commission_fee',
+                                      'transfer_fee'])
+    def transforme_order_state(row):
+        if row == ORDER_STATUS.FILLED:
+            return 'FILLED'
+        elif row == ORDER_STATUS.REJECTED:
+            return 'REJECTED'
+        elif row == ORDER_STATUS.PARTIAL_FILLED:
+            return 'PARTIAL_FILLED'
+    history_orders['order_state'] = history_orders['order_state'].apply(\
+                 transforme_order_state)
+    
     # 持仓记录
     holding_record = pd.DataFrame(np.array(report['position'])[:,2].tolist(),
                                   columns = report['universe'],
                                   index = np.array(report['position'])[:,0])
+    
     # 持仓比例
     weight_record = pd.DataFrame()
     for record in report['daily_weight']:
@@ -81,22 +112,34 @@ def visualize_report(report,save_path = None):
         tmp_ser.name = record[0]
         weight_record = pd.concat([weight_record,tmp_ser],axis = 1)
     weight_record = weight_record.T
-    # 下单记录
-    order_record = pd.DataFrame.from_records(report['history_orders'])
-    # 成交记录
-    fill_order_record = pd.DataFrame.from_records(report['history_fill_orders'])
-    # 拒单记录
-    reject_order_record = pd.DataFrame.from_records(report['history_rejected_orders'])
     
+    # 现金记录
+    cash_df = pd.DataFrame.from_records(report['daily_cash'],
+                                       columns = ['calendar_dt',
+                                                  'trading_dt',
+                                                  'cash'])
+    cash_df = cash_df[['calendar_dt','cash']].set_index('calendar_dt')  
+    
+    # 账户总资产
+    portfolio_value_df = pd.DataFrame.from_records(report['daily_portfolio_value'],
+                                       columns = ['calendar_dt',
+                                                  'trading_dt',
+                                                  'portfolio_value'])
+    portfolio_value_df = portfolio_value_df[['calendar_dt','portfolio_value']].\
+                    set_index('calendar_dt') 
+    
+    # 合并
+    account_record = pd.concat([cash_df,portfolio_value_df],axis = 1)
+    account_record['market_value'] = account_record['portfolio_value'] - \
+                                    account_record['cash']   
     # 保存
     if save_path is not None:
         holding_record.to_excel(os.path.join(save_path,'holding_record.xlsx'))
-        order_record.to_excel(os.path.join(save_path,'order_record.xlsx'))
-        fill_order_record.to_excel(os.path.join(save_path,'fill_order_record.xlsx'))
-        reject_order_record.to_excel(os.path.join(save_path,'reject_order_record.xlsx'))
         weight_record.to_excel(os.path.join(save_path,'weight_record.xlsx'))
+        account_record.to_excel(os.path.join(save_path,'account_record.xlsx'))
+        history_orders.to_excel(os.path.join(save_path,'history_orders.xlsx') )        
     # 返回
-    return holding_record,order_record,fill_order_record,reject_order_record,weight_record
+    return holding_record,weight_record,account_record,history_orders,
 
 def describe(report):
     '''
@@ -162,7 +205,6 @@ def plot_history_weight(report):
     plt.xticks(fontsize = 14)
     plt.yticks(fontsize = 14)
     plt.legend()
-
 
 if __name__ == '__main__':
     file_path = 'G:\\Work_ldh\\PM\\F1\\bt\\fof_f1_2.pkl'

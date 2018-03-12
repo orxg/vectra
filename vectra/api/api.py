@@ -13,8 +13,6 @@ __all__ = [
        'order_pct_to'
        ]
 
-import logging
-
 from ..constants import DIRECTION_LONG,DIRECTION_SHORT
 from ..events import EVENT,Event
 from ..environment import Environment
@@ -48,15 +46,13 @@ def order(ticker,amount,order_price = None):
         open_price =  env.bar_map.get_stock_latest_bar_value(ticker,'open_price')
         order_price = open_price
         
-    order_obj = Order(env.calendar_dt,env.trading_dt,
+    order_obj = Order.__create_order__(env.calendar_dt,env.trading_dt,
                       ticker,amount,
                       direction,order_price)
     order_event = Event(EVENT.PENDING_NEW_ORDER,
                         order = order_obj)
     
     env.event_bus.publish_event(order_event)
-    logging.info('ORDER.CODE:{ticker},DATE:{date}'.format(ticker = ticker,
-                 date = env.bar_map._data[-1]['trade_date']))
     return order_obj
     
 def order_to(ticker,amount,order_price = None):
@@ -105,7 +101,7 @@ def order_pct_to(ticker,pct,order_price = None):
     if order_price == 0:
         print 'No data available for the trade for %s'%ticker
         return
-    target_amount = target_value / order_price
+    target_amount = int(target_value / order_price)
     
     order_to(ticker,target_amount,order_price)
     

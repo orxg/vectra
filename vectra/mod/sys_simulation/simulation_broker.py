@@ -8,9 +8,8 @@ Created on Mon Aug 21 13:23:37 2017
 # simulation_broker.py
 import logging
 
-from vectra.constants import DIRECTION_LONG,DIRECTION_SHORT
+from vectra.constants import DIRECTION_LONG,DIRECTION_SHORT,ORDER_STATUS
 from vectra.events import EVENT,Event
-from vectra.model.orders import FillOrder
 
 class SimulationBroker():
     def __init__(self,env):
@@ -27,10 +26,12 @@ class SimulationBroker():
         order = event.order
         # 检查可交易性
         if self._tradable_check(order):
+            order.order_state = ORDER_STATUS.ACTIVE
             self.blotter.append(order)
             self.env.event_bus.publish_event(Event(EVENT.PENDING_NEW_ORDER_PASS,
                                              order = order))
         else:
+            order.order_state = ORDER_STATUS.REJECTED
             self.env.event_bus.publish_event(Event(EVENT.REJECT_ORDER,
                                              order = order,reason = 'Can not trade'))            
     def _match_on_bar(self,event):
@@ -73,19 +74,45 @@ class SimulationBroker():
             
             # 账户检验
             if direction == DIRECTION_LONG:
-                tax = 0
-                transfer_fee = int(amount/1000 - 0.001) + 1
-                commission_fee = max(amount * order_price * 0.003,5)
-                transaction_fee = tax + transfer_fee + commission_fee                
                 cash = self.env.account.cash
                 
-                if cash < amount * order_price + transaction_fee:
+                tax = 0
+                transfer_fee = int(amount/1000.0 - 0.001) + 1
+                commission_fee = max(amount * order_price * 0.003,5)
+                transaction_fee = tax + transfer_fee + commission_fee                
+
+                while cash < amount * order_price + transaction_fee:
+                    # 此处采用部分成交机制
+                    ## 找到最大可成交数量
+                    amount -= 100.0                   
+                    if amount < 100:
+                        break
+                    tax = 0.0
+                    transfer_fee = int(amount/1000.0 - 0.001) + 1
+                    commission_fee = max(amount * order_price * 0.003,5)
+                    transaction_fee = tax + transfer_fee + commission_fee  
+                
+                if amount < 100:                        
+                    order.order_state = ORDER_STATUS.REJECTED
                     reject_event = Event(EVENT.REJECT_ORDER,
                      reason = 'Not enough cash',
                      order = order)
                     self.env.event_bus.publish_event(reject_event)
                     continue
-                    
+                
+                else:
+                    order.order_state = ORDER_STATUS.PARTIAL_FILLED
+                    order.fill_dt = trading_dt
+                    order.tax = tax
+                    order.commission_fee = commission_fee
+                    order.transfer_fee = transfer_fee
+                    order.transaction_fee = transaction_fee
+                    order.match_price = order_price
+                    order.match_amount = amount                      
+                    trade_event = Event(EVENT.TRADE,calendar_dt = calendar_dt,
+                                       trading_dt = trading_dt,order = order)
+                    self.env.event_bus.publish_event(trade_event)                         
+                    continue
                 
             elif direction == DIRECTION_SHORT:
                 tax = abs(amount) * order_price * 0.001
@@ -97,13 +124,6 @@ class SimulationBroker():
                 
                 if abs(amount) > position:
                     amount = - position
-#==============================================================================
-#                     reject_event = Event(EVENT.REJECT_ORDER,
-#                      reason = 'Not enough stocks to sell',
-#                      order = order)
-#                     self.env.event_bus.publish_event(reject_event)
-#                     return                    
-#==============================================================================
             
             # 市场检验
             open_price = self.env.bar_map.get_stock_latest_bar_value(ticker,'open_price')
@@ -119,34 +139,39 @@ class SimulationBroker():
             total_amount = self.env.bar_map.get_stock_latest_bar_value(ticker,'volume')
             
             if order_price > high_price:
+                order.order_state = ORDER_STATUS.REJECTED
                 reject_event = Event(EVENT.REJECT_ORDER,
                  reason = 'order price is too high',
                  order = order)
                 self.env.event_bus.publish_event(reject_event)  
                 continue
             if order_price < low_price:
+                order.order_state = ORDER_STATUS.REJECTED
                 reject_event = Event(EVENT.REJECT_ORDER,
                  reason = 'order price is too low',
                  order = order)
                 self.env.event_bus.publish_event(reject_event)
                 continue
             if amount >= total_amount:
+                order.order_state = ORDER_STATUS.REJECTED
                 reject_event = Event(EVENT.REJECT_ORDER,
                  reason = 'order amount is too much',
                  order = order)
                 self.env.event_bus.publish_event(reject_event) 
                 continue
                 
-            # 生成交易订单
-            fill_order_obj = FillOrder(calendar_dt,trading_dt,
-                                       ticker,amount,
-                                       direction,tax,
-                                       commission_fee,transfer_fee,
-                                       transaction_fee,
-                                       order_price)
-            trade_event = Event(EVENT.TRADE,calendar_dt = calendar_dt,
-                               trading_dt = trading_dt,order = fill_order_obj)
+            # 订单成交
+            order.order_state = ORDER_STATUS.FILLED
+            order.fill_dt = trading_dt
+            order.tax = tax
+            order.commission_fee = commission_fee
+            order.transfer_fee = transfer_fee
+            order.transaction_fee = transaction_fee
+            order.match_price = order_price    
+            order.match_amount = amount
             
+            trade_event = Event(EVENT.TRADE,calendar_dt = calendar_dt,
+                               trading_dt = trading_dt,order = order)
             self.env.event_bus.publish_event(trade_event)                      
           
        

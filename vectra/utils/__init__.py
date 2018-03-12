@@ -12,3 +12,8 @@ def id_gen(start=1):
     while True:
         yield i
         i += 1
+        
+        
+if __name__ == '__main__':
+    id_g = id_gen()
+    new_id = next(id_g)
