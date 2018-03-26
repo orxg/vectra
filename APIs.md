@@ -7,7 +7,11 @@ config = {'base':
      'universe':['000001']},
 	 'source':'excel',
 	 'file_path':''}
-	 
+    
+## source
+数据源,当前支持'excel','sql','bcolz'
+excel和bcolz需要file_path
+
 ## 注意
 universe必须是一个list.
 

@@ -11,6 +11,8 @@ import pickle
 import numpy as np
 import pandas as pd
 import matplotlib as mpl
+from matplotlib import gridspec
+from matplotlib import ticker
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
 from color_names import color_names
@@ -38,6 +40,17 @@ def plot(report):
     portfolio_return['portfolio_value'] / portfolio_return['portfolio_value'].values[0] - 1.0
     portfolio_return = portfolio_return[['calendar_dt','portfolio_accumulate_return']]
     
+    # 统计指标
+    statistic = describe(report)
+    
+    # 做图设定
+    red = "#aa4643"
+    black = "#000000"
+    font_size = 14
+    value_font_size = 13
+
+    # 开始做图
+    
     x_vals = portfolio_return['calendar_dt'].values
     y_vals = portfolio_return['portfolio_accumulate_return'].values
     N = len(x_vals)
@@ -47,7 +60,9 @@ def plot(report):
         this_ind = np.clip(int(x+0.5),0,N-1)
         return pd.to_datetime(x_vals[this_ind]).strftime('%Y-%m-%d')
     
-    fig,ax = plt.subplots(figsize = (20,8))
+    plt.figure(figsize = (20,8))
+    gs = gridspec.GridSpec(8,8)
+    ax = plt.subplot(gs[:,:-1])
     ax.plot(ind,y_vals)
     ax.xaxis.set_major_formatter(FuncFormatter(format_date))
     ax.set_yticklabels(['{:.2%}'.format(y) for y in ax.get_yticks()])
@@ -55,7 +70,19 @@ def plot(report):
     ax.set_title('Strategy Accumulate Return',fontsize = 25)
     ax.set_xlabel('Date',fontsize = 20)
     ax.set_ylabel('Accumulate Return',fontsize = 20)
-    plt.show()
+   
+    
+    ax2 = plt.subplot(gs[:,-1])
+    fig_data = [
+            (0.01,0.9,0.85,'Total Returns','{0:.3%}'.format(statistic['total_return']),red,black),
+            (0.01,0.8,0.75,'Annual Returns','{0:.3%}'.format(statistic['annual_return']),red,black),
+            (0.01,0.7,0.65,'Max Drawdown','{0:.3%}'.format(statistic['max_drawdown']),red,black)]    
+    
+    for x,y1,y2, label, value, label_color, value_color in fig_data:
+        ax2.text(x, y1, label, color=label_color, fontsize=font_size)
+        ax2.text(x, y2, value, color=value_color, fontsize=value_font_size)
+    ax2.xaxis.set_major_locator(ticker.NullLocator())
+    ax2.yaxis.set_major_locator(ticker.NullLocator())
     
 def visualize_report(report,save_path = None):
     '''
@@ -144,6 +171,15 @@ def visualize_report(report,save_path = None):
 def describe(report):
     '''
     根据报告做统计描述.
+    
+    Parameters
+    ----------
+    report
+        Dict,vectra report
+        
+    Returns
+    ---------
+    Series
     '''
     # 累计收益率
     ini_value = report['daily_portfolio_value'][0][2]
@@ -155,18 +191,22 @@ def describe(report):
     end_date = report['daily_portfolio_value'][-1][0]
     duration = end_date - start_date
     duration_days = duration.days
-    annual_ret = (1 + total_ret) * 365.0 / duration_days
+    annual_ret = (1 + total_ret)**(365.0/duration_days) - 1.0
     
-    # 交易次数
-    # 根据fill_order数量来进行计算
-    trade_times = len(report['history_fill_orders'])
+    # 最大回撤
+    net_value = pd.DataFrame(report['daily_portfolio_value'],
+                             columns = ['calendar_dt',
+                                        'trade_dt',
+                                        'value'])
+    net_value.loc[:,'cum_max'] = net_value['value'].cummax()
+    net_value.loc[:,'dd'] = (net_value['cum_max'] - net_value['value'])/ net_value['cum_max']
+    max_dd = net_value['dd'].max()
     
-    # 交易胜率
+    return pd.Series([total_ret,annual_ret,max_dd],
+                     index = ['total_return',
+                              'annual_return',
+                              'max_drawdown'])
     
-    # 最大回撤比率
-    
-    # 最大连盈周数
-    pass
 
 def plot_history_weight(report):
     '''

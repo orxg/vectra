@@ -1,143 +1,146 @@
-# update log
+﻿# update log
+## 2013-03-26
+1. 添加基于bcolz压缩数据格式的数据源
+
 ## 2013-03-12
-1. ��д����ģ��,ɾ��FillOrder,���ڶ���ģ��ֻ��Orderһ����
-2. �Ż�������ʷ��¼,�ϲ����ж�����һ�ű���չʾ
-3. ��������ʱ�Ĳ��ֳɽ�����,������Ϊ�ֽ���ֱ�Ӿܵ�
+1. 重写订单模型,删除FillOrder,现在订单模型只有Order一个类
+2. 优化订单历史记录,合并所有订单到一张表中展示
+3. 添加做多时的部分成交机制,不再因为现金不足直接拒单
 
 ## 2018-03-09
-1. �����ۼƲ�λͼ����plot_history_weight,Ĭ�ϻز��������
+1. 添加累计仓位图函数plot_history_weight,默认回测结束后绘出
 
 ## 2018-03-08
-1. ���츾Ů��
-2. ���ӻ��ڲ�λExcel����Դ�Ļز⹦��run_weight
-3. ��������Excel���лز�ʱ���ݶ�ȡ������
+1. 今天妇女节
+2. 增加基于仓位Excel数据源的回测功能run_weight
+3. 修正基于Excel进行回测时数据读取的问题
 
 ## 2018-01-29
-1. �Ż�Excel����Դ����ȷ��
-2. �ڲ���Excel����Դ�������,start_date,end_date��������Ч��Ϊ��Ч
-3. ������־ϵͳ����,�ڲ�ָ��·��������»��������Ļ
-4. �޸���ϳز���յ�BUG,���ն����ػᱻ���!
+1. 优化Excel数据源的正确性
+2. 在采用Excel数据源的情况下,start_date,end_date参数从无效改为有效
+3. 添加日志系统部分,在不指定路径的情况下会输出到屏幕
+4. 修复撮合池不清空的BUG,当日订单池会被清空!
 
 ## 2018-01-25
-1. �޸Ĵ�ϻ���,����ʱ���µ��������ڳֲ����������,���پܵ�
-2. ����Analyser��λ��¼BUG.ԭ�����ڼ�¼ʱ�����˶�������,����copy���������.Account��position��ȷ.
-3. ��Analyser������ÿ�ճֱֲ�����¼daily_weight,���ڱȽϲ��Ե�ʵ�����
-4. �����˴�ϳɽ���߼���ͼ�����,����߼�����ͼ��������ɽ�(ĿǰĬ��Ϊ���̽���.)
+1. 修改撮合机制,卖出时若下单数量大于持仓数量则清仓,不再拒单
+2. 修正Analyser仓位记录BUG.原因在于记录时采用了对象引用,引入copy解决该问题.Account的position正确.
+3. 在Analyser中添加每日持仓比例记录daily_weight,便于比较策略的实现情况
+4. 放松了撮合成交最高价最低价限制,在最高价与最低价上允许成交(目前默认为开盘交易.)
 
 ## 2018-01-24
-1. ֧��Excel����Դ
-2. ��������Դ��ʽѡ������ѡ��
-3. ����account����get_weight,֧�ֻ�ȡ��ǰ�ֲ�Ȩ��
-4. ͨ��FOF�ֶ����ֻ���Excel����Դ�Ĳ��Բ���
-5. ��ǿorder_pct_to���ݴ���
-6. ����APIs.md�����˵��
+1. 支持Excel数据源
+2. 增加数据源格式选择配置选项
+3. 增加account方法get_weight,支持获取当前持仓权重
+4. 通过FOF轮动换仓基于Excel数据源的策略测试
+5. 加强order_pct_to的容错率
+6. 更新APIs.md的相关说明
 
 
 ## 2017-11-28
-1. ���������Ѽ���ķ���BUG
-2. ͨ����ֻ��Ʊbuy_and_hold
-3. ͨ��moving_average
+1. 修正手续费计算的符号BUG
+2. 通过多只股票buy_and_hold
+3. 通过moving_average
 
 ## 2017-11-24
-1. ��ֻ��Ʊ����ͨ��,�޸��˶��BUG
-2. �������ۼ���������ͼmod,sys_report_analyse
+1. 单只股票测试通过,修复了多个BUG
+2. 添加了累计收益率做图mod,sys_report_analyse
 
 ## 2017-11-22
-1. �ع��˳���,��account,position��Ϊmod����sys_simulation
-2. ��д��data_proxy,main,environment,simulation_event,simulation_account,simulation_position,simulation_broker,api
-3. ϸ���˳ɽ���ϻ��ƣ������Ƿ�ɽ��ף��˻����棬�г�����
+1. 重构了程序,将account,position作为mod移入sys_simulation
+2. 重写了data_proxy,main,environment,simulation_event,simulation_account,simulation_position,simulation_broker,api
+3. 细化了成交撮合机制，包括是否可交易，账户方面，市场方面
 
 ## 2017-11-21
-1. ��������ԴΪPodaci
-2. ɾ�������ģ�⹦�ܣ�רע�ز�
+1. 更换数据源为Podaci
+2. 删除程序的模拟功能，专注回测
 
 ## 2017-10-11
-1. ����get_attr��������ȡ��������
-2. �޸�bar_map�뵱ǰ���ݻ�ȡ��ʽ����
+1. 增加get_attr向量化获取行情数据
+2. 修改bar_map与当前数据获取方式兼容
 
 ## 2017-09-18
-1. ɾ��analyser��ָ����㹦��,����רע�ڼ�¼�������˻�״̬,���ɻز��¼���浫�������κ�ָ��
-2. ��fill_order����ط��ü�¼�����˷ֽ�
-3. ����account��¼�����Ĺ��ܸ�analyser
-4. ��report_path,persist_path��Ϊ���ò������ϵ�etc.yaml�ļ���,������û��ָ��·��ʱĬ�϶�ȡ����·��
+1. 删除analyser的指标计算功能,让其专注于记录订单、账户状态,生成回测记录报告但不计算任何指标
+2. 对fill_order的相关费用记录进行了分解
+3. 剥离account记录订单的功能给analyser
+4. 将report_path,persist_path作为配置参数整合到etc.yaml文件中,程序在没有指定路径时默认读取配置路径
 
 ## 2017-09-17
-1. �����˻������Դ�ķ������ݵ�ʱ���
+1. 修正了混合数据源的分钟数据的时间戳
 
 ## 2017-09-16
-1. �������޷�ָ���ز�������·����BUG
+1. 修正了无法指定回测结果保存路径的BUG
 
 ## 2017-09-14
-1. ֧�ַ����߻ز�
-2. ֧�ֳ�ʼ����λ
+1. 支持分钟线回测
+2. 支持初始化仓位
 
 ## 2017-09-13
-1. ���ӷ�����ģ���¼���
+1. 增加分钟线模拟事件流
 
 ## 2017-09-12
-1. �޸���һЩbug
-2. ������wind����get_stocks_factors
+1. 修复了一些bug
+2. 增加了wind函数get_stocks_factors
 
 ## 2017-09-11
-1. ���ӻزⱨ��ͳ��ָ�꣬�ڲ��Բֿ��������˻ز�����������
+1. 增加回测报告统计指标，在策略仓库中添加了回测结果分析函数
 
 ## 2017-09-08
-1. �ӻز�/ģ��ϵͳ�г�������Թ���ϵͳΪһ�������Ĳֿ⣬�Ӷ�ʵ�ֲ��Թ�����ƽ̨����������ϡ�
-2. ���������°����ȡһ��Ԥ�����ݵĺ�����
+1. 从回测/模拟系统中抽离出策略管理系统为一个单独的仓库，从而实现策略管理与平台开发降低耦合。
+2. 增加针对万德按年获取一致预测数据的函数。
 
 ## 2017-09-07
-1. ����parse_config���ߣ�֧����config�е�universe����ͨ���򵥵��趨'A'ѡȡȫA�ɵ����ƹ���('A-st','sz50','hs300'��)
-2. ���ӽ���Wind��Ʊ���ӡ���ҵ���ӵĺ��������ӻ�ȡ��Ʊ�����Լ���Ӧ��ҵ���ӵĺ�����
+1. 增加parse_config工具，支持在config中的universe参数通过简单的设定'A'选取全A股等类似功能('A-st','sz50','hs300'等)
+2. 增加接入Wind股票因子、行业因子的函数。增加获取股票因子以及对应行业因子的函数。
 
 ## 2017-09-06
-1. ���Ļز���ģ��Ĵ�ϻ���
-2. ���ӷ���email�������mod,ģ��ģʽ�£���Ҫ��before_trading������ͨ��context������Ҫ���ݵ���Ϣ
+1. 更改回测与模拟的撮合机制
+2. 增加发送email到邮箱的mod,模拟模式下，需要在before_trading函数中通过context定义需要传递的信息
 
 ## 2017-09-05
-1. get_symbols���ڻ���tushare֧�ֵ�ǰ���ֳɷֹ�
-2. ���ģ�����޷��޳�ͣ�ƹ�Ʊ������
+1. get_symbols现在基于tushare支持当前多种成分股
+2. 解决模拟中无法剔除停牌股票的问题
 
 ## 2017-09-04
-1. �����˳־û������ṩ����DiskPersistProvider��PersistHelper
-2. ��context,account,position,analyser�����˳־û�����
-3. ������buy_and_hold����ģ��,�������У�����������
+1. 增加了持久化服务提供对象DiskPersistProvider和PersistHelper
+2. 给context,account,position,analyser加入了持久化方法
+3. 运行了buy_and_hold策略模拟,可以运行，但是有问题
 
 ## 2017-09-01
-1. ����ʵ�Ļز�(����Ȩ���� + �ֺ��͹� + ���;��̬��Ʊ�أ�ÿ���Զ��޳�δ���С�ͣ�ơ����й�Ʊ)
-2. �޸��˻ز�ȡ���ݵķ��������ٲ���bar���ݽṹ�����ٲ���history_bar�����书�����ϵ�context�С�
+1. 更真实的回测(不复权数据 + 分红送股 + 配股;动态股票池，每日自动剔除未上市、停牌、退市股票)
+2. 修改了回测取数据的方法，不再采用bar数据结构，不再采用history_bar对象，其功能整合到context中。
 
 ## 2017-08-31
-1. ������һЩ���ű������ݽӿ�(�ֺ���ת��ͣ�ƣ��������У����ת���)
-2. get_history֧�ַ���������
+1. 增加了一些国信本地数据接口(分红送转，停牌，上市退市，配股转配股)
+2. get_history支持分钟线数据
 
 ## 2017-08-29
-1. �����ʽ����ߵ����
-2. ����T+1���׻���
-3. �Ż���ϻ����Լ�������
-4. ���Ӷ�����¼
+1. 美化资金曲线的输出
+2. 增加T+1交易机制
+3. 优化撮合机制以及手续费
+4. 增加订单记录
 
 ## 2017-08-28
-1. ��modlue��������Calendar���ṩ���ڻ����Ĺ���(Ŀǰ֧��19910101���ز��ֹ���ڵĻ���)
-2. ��core������HistoryBars�����ṩ�ز��еĿɵ���ʷ�������ݡ�
-3. ��utils������convertor,�ṩbar��dataframe��ת��
-4. �޸�dataproxy׼���ز����ݵ��߼�����ͨ��ʱ��ȡ���ݸĳ���������������Ӧ����(��Ҫ�Ķ�)
-5. get_bar����ͨ��bar_map����,����api�е��µ���������data_proxy����������get_price��ȡ��Ӧ�ļ۸�����
-6. ͨ��5�վ�����30�վ��߲��ԵĲ���
-7. ��analyser��������������ͳ�ơ����桢չʾ����(��Ӧ�޸���main)
-8. account���µĴ����¼�����ΪPOST_BAR
+1. 在modlue中增加了Calendar，提供日期滑动的功能(目前支持19910101到回测截止日期的滑动)
+2. 在core中添加HistoryBars负责提供回测中的可得历史行情数据。
+3. 在utils中添加convertor,提供bar与dataframe的转换
+4. 修改dataproxy准备回测数据的逻辑，将通过时间取数据改成用生成器产生对应数据(重要改动)
+5. get_bar仅能通过bar_map调用,所以api中的下单函数采用data_proxy的新增函数get_price获取对应的价格数据
+6. 通过5日均线与30日均线策略的测试
+7. 在analyser中增加了收益率统计、保存、展示功能(对应修改了main)
+8. account更新的触发事件，改为POST_BAR
 
 ## 2017-08-25
-1. �����˲��ֻ���Wind�����ݿ�(��������ʹ��)
-2. �����˻��ڱ������ݿ�����ݽӿ�(����matlab����)��δ����
-3. �������»������Դ(MixedDataSource)��������Դ�Ա������ݿ�Ϊ���������tushare,wind�����ݽӿڣ�����ǿ��ͨ��buy_and_hold���Բ��ԡ�
-4. ����Ĭ������ԴΪ�������Դ��
-5. ������һЩ���ݽӿ���صĹ��ߺ���(wind_utils,matlab_utils,tushare_utils,utils��)��
-6. ���Ӹ���������ݴ���������
+1. 建立了部分基于Wind的数据库(不能正常使用)
+2. 建立了基于本地数据库的数据接口(基于matlab引擎)，未测试
+3. 建立最新混合数据源(MixedDataSource)，该数据源以本地数据库为基础，结合tushare,wind等数据接口，功能强大，通过buy_and_hold策略测试。
+4. 更改默认数据源为混合数据源。
+5. 增加了一些数据接口相关的工具函数(wind_utils,matlab_utils,tushare_utils,utils等)。
+6. 增加更多相关数据代理函数。
 
 ## 2017-08-23
-1. ���������mod����cmdģʽ�¿�����������
-2. ������ģ�⽻��mod,������δ����
-3. �Ż���mod����
+1. 加入进度条mod，在cmd模式下可以正常运行
+2. 加入了模拟交易mod,功能尚未测试
+3. 优化了mod管理
 
 ## 2017-08-22
-����ɹ����е�ֻ��Ʊbuy_and_hold���ԡ�
+程序成功运行单只股票buy_and_hold策略。

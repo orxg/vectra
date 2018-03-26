@@ -10,6 +10,7 @@ import time
 
 from podaci.data_source.mixed_db import MixedDataSource
 from podaci.data_source.disk_source import DiskDataSource
+from podaci.data_source.bcolz_source import BcolzDataSource
 from .events import EVENT,Event
 from .environment import Environment
 from .core.engine import Engine
@@ -27,7 +28,7 @@ from .utils.persist_provider import DiskPersistProvider
 from .utils.persist_helper import PersistHelper
 from .api.helper import get_apis
 from .constants import (BACKTEST,PAPER_TRADING,
-                        DATA_SOURCE_EXCEL,DATA_SOURCE_SQL)
+                        DATA_SOURCE_EXCEL,DATA_SOURCE_SQL,DATA_SOURCE_BCOLZ)
 
 def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
                   persist_path = None,report_path = None,if_test = False,
@@ -84,10 +85,13 @@ def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
     
     #%% 数据源与代理载入环境
     if config.source == DATA_SOURCE_EXCEL:
-        env.set_data_source(DiskDataSource(config,config.universe,config.file_path))
+        env.set_data_source(DiskDataSource(config))
     elif config.source == DATA_SOURCE_SQL:
         env.set_data_source(MixedDataSource(env.universe,env.start_date,
                                             env.end_date,env.data_mode))  
+    elif config.source == DATA_SOURCE_BCOLZ:
+        env.set_data_source(BcolzDataSource(config)) 
+        
     env.set_data_proxy(DataProxy(env.data_source,
                                  data_mode=data_mode,
                                  mode=mode))

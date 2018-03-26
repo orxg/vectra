@@ -18,6 +18,7 @@ etc_path = os.path.join(package_path,'etc.yaml')
 with open(etc_path,'r') as f:
     etc = yaml.load(f)
 
+
 def run_file(config,strategy_name,strategy_path,data_mode = 'e',mode = 'b',
              persist_path = None,report_path = None,if_test = False,
              log_path = None,verbose = False):

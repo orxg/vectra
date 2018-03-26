@@ -126,14 +126,6 @@ class SimulationBroker():
                     amount = - position
             
             # 市场检验
-            open_price = self.env.bar_map.get_stock_latest_bar_value(ticker,'open_price')
-            try:
-                assert open_price == order_price
-            except:
-                logging.info('WARNING: THE PRICE MATCH ERROR ticker:%s,trading_dt:%s,order_price:%s,open_price:%s'%(ticker,
-                                                                                                  trading_dt,
-                                                                                                  order_price,
-                                                                                                  open_price))
             high_price = self.env.bar_map.get_stock_latest_bar_value(ticker,'high_price')
             low_price = self.env.bar_map.get_stock_latest_bar_value(ticker,'low_price')
             total_amount = self.env.bar_map.get_stock_latest_bar_value(ticker,'volume')

@@ -28,7 +28,7 @@ DIRECTION_SHORT = 'DIRECTION_SHORT'
 #%% 数据源
 DATA_SOURCE_EXCEL = 'excel'
 DATA_SOURCE_SQL = 'sql'
-
+DATA_SOURCE_BCOLZ = 'bcolz'
 #%% 订单状态
 class ORDER_STATUS(CustomEnum):
     PENDING_NEW = "PENDING_NEW"
