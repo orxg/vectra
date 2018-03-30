@@ -13,7 +13,8 @@ class Config(object):
     
     def __init__(self,config):
         self.config = config
-        self.parse_universe()
+        self._parse_universe()
+        self._generate_fee_table()
         
     def to_dict(self):
         return self.config
@@ -56,7 +57,7 @@ class Config(object):
     def file_path(self):
         return self.config['file_path']
     
-    def parse_universe(self):
+    def _parse_universe(self):
         universe = self.config['base']['universe']
         if not isinstance(universe,list):
             print 'attribute universe must be a list'
@@ -70,16 +71,15 @@ class Config(object):
             else:
                 self.universe = universe
                 
-    def generate_fee_table(self):
+    def _generate_fee_table(self):
         fee_table = pd.DataFrame([TRANSACTION_FEE_DEFAULTS] * len(self.universe),
                          index = self.universe,columns = TRANSACTION_FEE_ITEMS)
         self.fee_table = fee_table      
         if 'fee' not in self.config.keys():
-            return self.fee_table
+            return 
         else:
             for key,val in self.config['fee'].items():
                 self.fee_table.loc[key,:] = val
-            return self.fee_table
         
     
        
