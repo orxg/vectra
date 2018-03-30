@@ -6,7 +6,8 @@ Created on Thu Sep 07 14:48:39 2017
 """
 
 # parse_config.py
-# from ..data.data_proxy import DataProxy
+import pandas as pd
+from ..constants import TRANSACTION_FEE_DEFAULTS,TRANSACTION_FEE_ITEMS
 
 class Config(object):
     
@@ -69,6 +70,17 @@ class Config(object):
             else:
                 self.universe = universe
                 
+    def generate_fee_table(self):
+        fee_table = pd.DataFrame([TRANSACTION_FEE_DEFAULTS] * len(self.universe),
+                         index = self.universe,columns = TRANSACTION_FEE_ITEMS)
+        self.fee_table = fee_table      
+        if 'fee' not in self.config.keys():
+            return self.fee_table
+        else:
+            for key,val in self.config['fee'].items():
+                self.fee_table.loc[key,:] = val
+            return self.fee_table
+        
     
        
     

@@ -9,6 +9,7 @@ Created on Mon Sep 04 08:46:56 2017
 
 import hashlib
 from ..events import EVENT
+from ..constants import PAPER_TRADING
 
 class PersistHelper():
     '''
@@ -18,8 +19,8 @@ class PersistHelper():
         self._objects = {}
         self._last_state = {}
         self._persist_provider = persist_provider
-        if persist_mode == 'p':
-            event_bus.add_listener(EVENT.POST_AFTER_TRADING,self.persist)
+        if persist_mode == PAPER_TRADING:
+#            event_bus.add_listener(EVENT.POST_AFTER_TRADING,self.persist)
             event_bus.add_listener(EVENT.POST_SETTLEMENT,self.persist)
             
             

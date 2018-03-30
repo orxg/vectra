@@ -38,3 +38,10 @@ class ORDER_STATUS(CustomEnum):
     REJECTED = "REJECTED"
     PENDING_CANCEL = "PENDING_CANCEL"
     CANCELLED = "CANCELLED"
+
+#%% 交易费用
+TRANSACTION_FEE_ITEMS = ['transfer_fee_on_long','transfer_fee_on_short',
+                         'tax_rate_long','tax_rate_short',
+                         'commission_fee_rate_long','commission_fee_rate_short',
+                         'min_amount_long','min_amount_short']
+TRANSACTION_FEE_DEFAULTS = [1,1,0,0.001,0.003,0.003,100,1]

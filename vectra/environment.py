@@ -47,7 +47,8 @@ class Environment():
         self.capital = self.config.capital
         self.universe = self.config.universe
         self.frequency = self.config.frequency
-    
+        self.fee_table = self.config.fee_table
+        
     @classmethod
     def get_instance(cls):
         return Environment._env

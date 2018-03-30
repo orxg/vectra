@@ -34,7 +34,7 @@ def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
                   persist_path = None,report_path = None,if_test = False,
                   log_path = None,weight_path = None,verbose = False):
     '''
-    主程序。启动回测。
+    主程序。启动系统。
     
     Parameters
     ----------
@@ -54,6 +54,8 @@ def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
             报告保存地址
         if_test
             bool,是否为测试,默认为False
+        log_path
+            str,日志地址(未实现)
         weight_path
             str,仓位数据所在文件地址,默认为None
         verbose
@@ -133,7 +135,7 @@ def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
         persist_helper.rigister('user_context',user_context)
         persist_helper.rigister('account',env.account)
         persist_helper.rigister('analyser',env.analyser)
-    
+        
         ### 从硬盘中恢复到最新的状态
         persist_helper.restore()
         print 'Restore previous strategy status successfully'

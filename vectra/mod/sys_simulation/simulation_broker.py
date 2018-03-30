@@ -14,6 +14,7 @@ from vectra.events import EVENT,Event
 class SimulationBroker():
     def __init__(self,env):
         self.env = env
+        self.fee_table = env.fee_table
         self.blotter = []
         
         event_bus = env.event_bus
@@ -76,23 +77,37 @@ class SimulationBroker():
             if direction == DIRECTION_LONG:
                 cash = self.env.account.cash
                 
-                tax = 0
-                transfer_fee = int(amount/1000.0 - 0.001) + 1
-                commission_fee = max(amount * order_price * 0.003,5)
+                tax = abs(amount) * order_price * \
+                    self.fee_table.loc[ticker,'tax_rate_long']
+                transfer_fee = (int(amount/1000.0 - 0.001) + 1.0) * \
+                                self.fee_table.loc[ticker,'transfer_fee_on_long']
+                    
+                commission_fee = max(amount * order_price * \
+                                     self.fee_table.loc[ticker,'commission_fee_rate_long'],5.0) \
+                                if self.fee_table.loc[ticker,'commission_fee_rate_long'] != 0 else 0
+                                    
                 transaction_fee = tax + transfer_fee + commission_fee                
 
                 while cash < amount * order_price + transaction_fee:
                     # 此处采用部分成交机制
                     ## 找到最大可成交数量
-                    amount -= 100.0                   
-                    if amount < 100:
+                    amount -= self.fee_table.loc[ticker,'min_amount_long'] 
+                    
+                    if amount < self.fee_table.loc[ticker,'min_amount_long']:
                         break
-                    tax = 0.0
-                    transfer_fee = int(amount/1000.0 - 0.001) + 1
-                    commission_fee = max(amount * order_price * 0.003,5)
+                    
+                    tax = abs(amount) * order_price * \
+                        self.fee_table.loc[ticker,'tax_rate_long']
+                    transfer_fee = (int(amount/1000.0 - 0.001) + 1.0) * \
+                                    self.fee_table.loc[ticker,'transfer_fee_on_long']
+                        
+                    commission_fee = max(amount * order_price * \
+                                         self.fee_table.loc[ticker,'commission_fee_rate_long'],5.0) \
+                                    if self.fee_table.loc[ticker,'commission_fee_rate_long'] != 0 else 0
+                                        
                     transaction_fee = tax + transfer_fee + commission_fee  
                 
-                if amount < 100:                        
+                if amount < self.fee_table.loc[ticker,'min_amount_long']:                        
                     order.order_state = ORDER_STATUS.REJECTED
                     reject_event = Event(EVENT.REJECT_ORDER,
                      reason = 'Not enough cash',
@@ -115,9 +130,14 @@ class SimulationBroker():
                     continue
                 
             elif direction == DIRECTION_SHORT:
-                tax = abs(amount) * order_price * 0.001
-                transfer_fee = int(abs(amount)/1000 - 0.001) + 1
-                commission_fee = max(abs(amount) * order_price * 0.003,5)
+                tax = abs(amount) * order_price * \
+                    self.fee_table.loc[ticker,'tax_rate_short']
+                transfer_fee = (int(amount/1000.0 - 0.001) + 1.0) * \
+                                self.fee_table.loc[ticker,'transfer_fee_on_short']
+                    
+                commission_fee = max(amount * order_price * \
+                                     self.fee_table.loc[ticker,'commission_fee_rate_short'],5.0) \
+                                if self.fee_table.loc[ticker,'commission_fee_rate_short'] != 0 else 0
                 transaction_fee = tax + transfer_fee + commission_fee
                 
                 position = self.env.account.get_position(ticker)

@@ -7,7 +7,19 @@ config = {'base':
      'universe':['000001']},
 	 'source':'excel',
 	 'file_path':''}
-    
+
+带有手续费设置的
+config = {'base':
+    {'start_date':'19900101',
+     'end_date':'20200101',
+     'capital':10000,
+     'frequency':'1d',
+     'universe':['000001']},
+	 'source':'excel',
+	 'file_path':'',
+	 'fee':{'000001':[[1,1],[0,0.001],[0.003,0.003],[100,1]}}
+
+
 ## source
 数据源,当前支持'excel','sql','bcolz'
 excel和bcolz需要file_path
