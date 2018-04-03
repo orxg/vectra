@@ -21,7 +21,7 @@ with open(etc_path,'r') as f:
 
 def run_file(config,strategy_name,strategy_path,data_mode = 'e',mode = 'b',
              persist_path = None,report_path = None,if_test = False,
-             log_path = None,verbose = False):
+             log_path = None,verbose = False,screen_print = False):
     '''
     Parameters
     ----------
@@ -45,6 +45,8 @@ def run_file(config,strategy_name,strategy_path,data_mode = 'e',mode = 'b',
         系统日志路径
     verbose
         bool,是否输出其他信息
+    screen_print
+        bool,是否输出到屏幕,默认为False
     '''
     if log_path is not None:
         logging.basicConfig(filename = log_path,level = logging.DEBUG)
@@ -72,7 +74,7 @@ def run_file(config,strategy_name,strategy_path,data_mode = 'e',mode = 'b',
     
 def run_weight(config,strategy_name,weight_path,data_mode = 'e',mode = 'b',
              persist_path = None,report_path = None,if_test = False,
-             log_path = None,verbose = False):
+             log_path = None,verbose = False,screen_print = False):
     '''
     Run the strategy based on the weight data.
     
@@ -98,6 +100,8 @@ def run_weight(config,strategy_name,weight_path,data_mode = 'e',mode = 'b',
         系统日志路径
     verbose
         bool,是否输出其他信息
+    screen_print
+        bool,是否输出到屏幕,默认为False
     '''
     if log_path is not None:
         logging.basicConfig(filename = log_path,level = logging.DEBUG)

@@ -47,7 +47,7 @@ def order(ticker,amount,order_price = None):
         order_price = open_price
         
     order_obj = Order.__create_order__(env.calendar_dt,env.trading_dt,
-                      ticker,amount,
+                      ticker,abs(amount),
                       direction,order_price)
     order_event = Event(EVENT.PENDING_NEW_ORDER,
                         order = order_obj)

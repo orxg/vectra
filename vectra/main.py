@@ -26,42 +26,51 @@ from .utils.parse_config import Config
 from .utils.create_base_scope import create_base_scope
 from .utils.persist_provider import DiskPersistProvider
 from .utils.persist_helper import PersistHelper
+from .utils.printer import ScreenPrinter
 from .api.helper import get_apis
 from .constants import (BACKTEST,PAPER_TRADING,
                         DATA_SOURCE_EXCEL,DATA_SOURCE_SQL,DATA_SOURCE_BCOLZ)
 
 def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
                   persist_path = None,report_path = None,if_test = False,
-                  log_path = None,weight_path = None,verbose = False):
+                  log_path = None,weight_path = None,verbose = False,
+                  screen_print = False):
     '''
     主程序。启动系统。
     
     Parameters
     ----------
-        config
-            策略配置
-        strategy_name
-            策略名称
-        strategy_path
-            策略路径
-        data_mode
-            数据模式
-        mode
-            运行模式
-        persist_path
-            持久化路径,模拟专有
-        report_path
-            报告保存地址
-        if_test
-            bool,是否为测试,默认为False
-        log_path
-            str,日志地址(未实现)
-        weight_path
-            str,仓位数据所在文件地址,默认为None
-        verbose
-            bool,是否输出除累计收益率图外的其他信息
+    config
+        策略配置
+    strategy_name
+        策略名称
+    strategy_path
+        策略路径
+    data_mode
+        数据模式
+    mode
+        运行模式
+    persist_path
+        持久化路径,模拟专有
+    report_path
+        报告保存地址
+    if_test
+        bool,是否为测试,默认为False
+    log_path
+        str,日志地址(未实现)
+    weight_path
+        str,仓位数据所在文件地址,默认为None
+    verbose
+        bool,是否输出除累计收益率图外的其他信息
+    screen_print
+        bool,是否输出到屏幕,默认为False
     '''        
     t_start = time.time()
+    screen_printer = ScreenPrinter()
+    
+    if screen_print:
+        screen_printer.turnon()
+        
     config = Config(config)
     env = Environment(config)
             
@@ -83,7 +92,7 @@ def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
     
     scope = strategy_loader.load(scope)
 
-    print 'Loading strategy scope successfully'
+    screen_printer.print_on_screen('Loading strategy scope successfully')
     
     #%% 数据源与代理载入环境
     if config.source == DATA_SOURCE_EXCEL:
@@ -97,7 +106,7 @@ def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
     env.set_data_proxy(DataProxy(env.data_source,
                                  data_mode=data_mode,
                                  mode=mode))
-    print 'Loading data source & data_proxy successfully'
+    screen_printer.print_on_screen('Loading data source & data_proxy successfully')
     
     #%% Strategy对象载入环境
     user_context = Context()
@@ -109,24 +118,24 @@ def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
     strategy = Strategy(env,scope,user_context,bar_map)
     assert strategy is not None
     strategy.initilize()
-    print 'Loading strategy successfully'     
+    screen_printer.print_on_screen('Loading strategy successfully')  
       
     #%% MOD载入环境(事件源,撮合者,账户)
     mod_handler = ModHandler(MOD_LIST)
     mod_handler.set_env(env)
     mod_handler.start_up()
-    print 'Loading mods successfully'
+    screen_printer.print_on_screen('Loading mods successfully')
     
     #%% 动态股票池载入环境
     dynamic_universe = DynamicUniverse()
     env.set_dynamic_universe(dynamic_universe)
-    print 'Loading dynamic universe successfully'
+    screen_printer.print_on_screen('Loading dynamic universe successfully')
         
     #%% 记录/分析工具载入环境
     if report_path is None:
         pass
     env.set_analyser(Analyser(env,strategy_name,report_path))
-    print 'Loading analyser successfully'
+    screen_printer.print_on_screen('Loading analyser successfully')
         
     #%% 持久化注册(模拟专有)
     if mode == PAPER_TRADING:
@@ -138,7 +147,7 @@ def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
         
         ### 从硬盘中恢复到最新的状态
         persist_helper.restore()
-        print 'Restore previous strategy status successfully'
+        screen_printer.print_on_screen('Restore previous strategy status successfully')
         
     #%% 检测系统是否正常设置
     if if_test:
@@ -149,24 +158,24 @@ def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
                 print _
             print '     '
     #%% 启动引擎
-    print 'The system engine is going to run right now...'
+    screen_printer.print_on_screen('The system engine is going to run right now...')
     env.event_bus.publish_event(Event(EVENT.SYSTEM_INITILIZE))
     Engine(env).run()
 
     #%% 获取报告
     report = env.analyser.report()
-    print 'Get the report successfully'
-    #%% 策略回测概述
-    env.report_analyser.plot(report)
-    
-    if verbose == True:
+    screen_printer.print_on_screen('Get the report successfully')
+    #%% 策略回测概述    
+    if verbose:
+        env.report_analyser.plot(report)
         env.report_analyser.plot_history_weight(report)
+        
     #%% 收尾
     mod_handler.tear_down()
     
     t_end = time.time()
     if mode == BACKTEST:
-        print 'The backtest cost %.2f seconds'%(t_end - t_start)
+        screen_printer.print_on_screen('The backtest cost %.2f seconds'%(t_end - t_start))
     return report
         
         

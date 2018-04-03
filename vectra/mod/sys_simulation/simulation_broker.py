@@ -142,8 +142,8 @@ class SimulationBroker():
                 
                 position = self.env.account.get_position(ticker)
                 
-                if abs(amount) > position:
-                    amount = - position
+                if amount > position:
+                    amount = position
             
             # 市场检验
             high_price = self.env.bar_map.get_stock_latest_bar_value(ticker,'high_price')

@@ -27,9 +27,16 @@ def load_report(file_path):
         report = pickle.load(f)
     return report
 
-def plot(report):
+def plot(report,save_path = None):
     '''
     根据报告做图.
+    
+    Parameters
+    -------------
+    report
+        dict,vectra产生的报告
+    save_path
+        str,图片保存路径
     '''
     # 资产收益率曲线
     portfolio_return = pd.DataFrame(report['portfolio_value'],
@@ -84,6 +91,9 @@ def plot(report):
     ax2.xaxis.set_major_locator(ticker.NullLocator())
     ax2.yaxis.set_major_locator(ticker.NullLocator())
     
+    if save_path is not None:
+        plt.savefig(save_path)
+        
 def visualize_report(report,save_path = None):
     '''
     输出并保存可视化的报告.
@@ -202,15 +212,26 @@ def describe(report):
     net_value.loc[:,'dd'] = (net_value['cum_max'] - net_value['value'])/ net_value['cum_max']
     max_dd = net_value['dd'].max()
     
-    return pd.Series([total_ret,annual_ret,max_dd],
+    # 最高收益率
+    max_net_value = net_value['value'].max()
+    max_ret = (max_net_value - net_value['value'].iloc[0]) / net_value['value'].iloc[0]
+        
+    return pd.Series([total_ret,annual_ret,max_dd,max_ret],
                      index = ['total_return',
                               'annual_return',
-                              'max_drawdown'])
+                              'max_drawdown',
+                              'max_ret'])
     
-
-def plot_history_weight(report):
+def plot_history_weight(report,save_path = None):
     '''
     画历史仓位图。
+    
+    Parameters
+    -------------
+    report
+        dict,vectra产生的报告
+    save_path
+        str,图片保存路径
     '''
     daily_weight = np.array(report['daily_weight'])[:,::2]
     
@@ -245,7 +266,10 @@ def plot_history_weight(report):
     plt.xticks(fontsize = 14)
     plt.yticks(fontsize = 14)
     plt.legend()
-
+    
+    if save_path is not None:
+        fig.savefig(save_path)
+        
 if __name__ == '__main__':
     file_path = 'G:\\Work_ldh\\PM\\F1\\bt\\fof_f1_2.pkl'
     report = load_report(file_path)

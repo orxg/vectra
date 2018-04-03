@@ -8,6 +8,7 @@ Created on Thu Mar 08 11:12:04 2018
 from vectra.api import order_pct_to
 
 def initilize(context):
+    print context.weight_map
     pass
 
 def before_trading(context):
@@ -22,7 +23,6 @@ def handle_bar(context,bar_map):
     
     current_weight = context.account.get_weight()
     weight_change = target_weight - current_weight
-    
     sell_sec_ser = weight_change.loc[weight_change < 0.0]
     buy_sec_ser = weight_change.loc[weight_change > 0.0]
 
