@@ -83,7 +83,8 @@ def plot(report,save_path = None):
     fig_data = [
             (0.01,0.9,0.85,'Total Returns','{0:.3%}'.format(statistic['total_return']),red,black),
             (0.01,0.8,0.75,'Annual Returns','{0:.3%}'.format(statistic['annual_return']),red,black),
-            (0.01,0.7,0.65,'Max Drawdown','{0:.3%}'.format(statistic['max_drawdown']),red,black)]    
+            (0.01,0.7,0.65,'Max Drawdown','{0:.3%}'.format(statistic['max_drawdown']),red,black),
+            (0.01,0.6,0.55,'Max Returns','{0:.3%}'.format(statistic['max_return']),red,black)]    
     
     for x,y1,y2, label, value, label_color, value_color in fig_data:
         ax2.text(x, y1, label, color=label_color, fontsize=font_size)
@@ -190,6 +191,10 @@ def describe(report):
     Returns
     ---------
     Series
+        total_return
+        annual_return
+        max_drawdown
+        max_return
     '''
     # 累计收益率
     ini_value = report['daily_portfolio_value'][0][2]
@@ -220,7 +225,7 @@ def describe(report):
                      index = ['total_return',
                               'annual_return',
                               'max_drawdown',
-                              'max_ret'])
+                              'max_return'])
     
 def plot_history_weight(report,save_path = None):
     '''

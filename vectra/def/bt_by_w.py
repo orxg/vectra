@@ -8,7 +8,6 @@ Created on Thu Mar 08 11:12:04 2018
 from vectra.api import order_pct_to
 
 def initilize(context):
-    print context.weight_map
     pass
 
 def before_trading(context):
