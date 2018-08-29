@@ -1,4 +1,7 @@
 ﻿# update log
+## 2018-08-29
+1. 增加run_weight策略模板run_weight_backtest_template
+
 ## 2018-04-03
 1. 添加是否输出到屏幕的选项
 2. 添加最大收益率计算
