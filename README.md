@@ -21,6 +21,13 @@ trade_date sec_1 sec_2
 20180228	0.5	  0.5  
 
 注意,列名与日期必须严格按照上述格式.
+# Benchmark
+在config中提供benchmark数据excel格式路径地址,可以绘制基准收益率,以及相对收益率.  
+benchmark的Excel数据格式如下  
+trade_date close_price  
+20180101	12  
+20180102	13  
+.....
 
 # Some Features
 ## Matching Regime
@@ -47,11 +54,11 @@ config = {'base':
      'universe':['000001']},
 	 'source':'excel',
 	 'file_path':'',
+	 'benchmark_path':'',
 	 'fee':
 	 {'000001':[1,1,0,0.001,0.003,0.003,100,1]}}
 其中key为标的,值为一个根据上图格式的list.  
 对应的值为按照上图中从上到下，从左到右的顺序。
 
 # Next Plan
-1. 增加指标计算
-2. 增加基于bcolz数据源支持
+1. 增加策略跟踪

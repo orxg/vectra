@@ -57,6 +57,10 @@ class Config(object):
     def file_path(self):
         return self.config['file_path']
     
+    @property
+    def benchmark_path(self):
+        return self.config['benchmark_path']
+    
     def _parse_universe(self):
         universe = self.config['base']['universe']
         if not isinstance(universe,list):

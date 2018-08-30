@@ -9,7 +9,7 @@ Created on Fri Nov 24 11:30:39 2017
 
 import numpy as np
 import pandas as pd
-from vectra.utils.analyse.analyse import plot,plot_history_weight
+from vectra.utils.analyse.analyse import plot,plot_history_weight,plot_with_benchmark
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
 
@@ -26,4 +26,5 @@ class ReportAnalyser():
     def plot_history_weight(self,report):
         plot_history_weight(report)
         
-        
+    def plot_with_benchmark(self,report,benchmark_path):
+        plot_with_benchmark(report,benchmark_path)

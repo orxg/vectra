@@ -94,6 +94,92 @@ def plot(report,save_path = None):
     
     if save_path is not None:
         plt.savefig(save_path)
+      
+def plot_with_benchmark(report,benchmark_path,save_path = None):
+    '''
+    根据报告做图.
+    
+    Parameters
+    -------------
+    report
+        dict,vectra产生的报告
+    benchmark_path
+        str,基准数据路径
+    save_path
+        str,图片保存路径
+    '''
+    # 资产收益率曲线
+    portfolio_return = pd.DataFrame(report['portfolio_value'],
+                                    columns = ['calendar_dt',
+                                               'trading_dt',
+                                               'portfolio_value'])
+    benchmark = pd.read_excel(benchmark_path,index_col = 0,parse_dates = True)
+    portfolio_return = portfolio_return.join(benchmark,on = 'calendar_dt')
+    portfolio_return.dropna(inplace = True)
+    portfolio_return['portfolio_accumulate_return'] = \
+    portfolio_return['portfolio_value'] / portfolio_return['portfolio_value'].values[0] - 1.0
+    portfolio_return['benchmark_accumulate_return'] = \
+    portfolio_return['close_price'] / portfolio_return['close_price'].values[0] - 1.0
+    portfolio_return = portfolio_return[['calendar_dt','portfolio_accumulate_return','benchmark_accumulate_return']]
+    portfolio_return['relative_accumulate_return'] = portfolio_return['portfolio_accumulate_return'] - \
+    portfolio_return['benchmark_accumulate_return']
+    
+    # 统计指标
+    statistic = describe(report)
+    
+    # 做图设定
+    red = "#aa4643"
+    black = "#000000"
+    blue = '#0000FF'
+    green = '#00FF7F'
+    
+    font_size = 14
+    value_font_size = 13
+
+    # 开始做图
+    
+    x_vals = portfolio_return['calendar_dt'].values
+    y_vals1 = portfolio_return['portfolio_accumulate_return'].values
+    y_vals2 = portfolio_return['benchmark_accumulate_return'].values
+    y_vals3 = portfolio_return['relative_accumulate_return'].values
+    
+    N = len(x_vals)
+    ind = np.arange(N)
+    
+    def format_date(x,pos=None):
+        this_ind = np.clip(int(x+0.5),0,N-1)
+        return pd.to_datetime(x_vals[this_ind]).strftime('%Y-%m-%d')
+    
+    plt.figure(figsize = (20,8))
+    gs = gridspec.GridSpec(8,8)
+    ax = plt.subplot(gs[:,:-1])
+    ax.plot(ind,y_vals1,color = blue,label = 'Portfolio')
+    ax.plot(ind,y_vals2,color = green,label = 'Benchmark')
+    ax.plot(ind,y_vals3,color = red,label = 'Relative')
+    ax.xaxis.set_major_formatter(FuncFormatter(format_date))
+    ax.set_yticklabels(['{:.2%}'.format(y) for y in ax.get_yticks()])
+    ax.grid(True)
+    ax.set_title('Strategy Accumulate Return',fontsize = 25)
+    ax.set_xlabel('Date',fontsize = 20)
+    ax.set_ylabel('Accumulate Return',fontsize = 20)
+    ax.legend(fontsize = 15)
+    
+    ax2 = plt.subplot(gs[:,-1])
+    fig_data = [
+            (0.01,0.9,0.85,'Total Returns','{0:.3%}'.format(statistic['total_return']),red,black),
+            (0.01,0.8,0.75,'Annual Returns','{0:.3%}'.format(statistic['annual_return']),red,black),
+            (0.01,0.7,0.65,'Max Drawdown','{0:.3%}'.format(statistic['max_drawdown']),red,black),
+            (0.01,0.6,0.55,'Max Returns','{0:.3%}'.format(statistic['max_return']),red,black)]    
+    
+    for x,y1,y2, label, value, label_color, value_color in fig_data:
+        ax2.text(x, y1, label, color=label_color, fontsize=font_size)
+        ax2.text(x, y2, value, color=value_color, fontsize=value_font_size)
+    ax2.xaxis.set_major_locator(ticker.NullLocator())
+    ax2.yaxis.set_major_locator(ticker.NullLocator())
+    
+    
+    if save_path is not None:
+        plt.savefig(save_path)
         
 def visualize_report(report,save_path = None):
     '''

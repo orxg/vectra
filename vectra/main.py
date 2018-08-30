@@ -167,7 +167,10 @@ def all_system_go(config,strategy_name,strategy_path,data_mode,mode,
     screen_printer.print_on_screen('Get the report successfully')
     #%% 策略回测概述    
     if verbose:
-        env.report_analyser.plot(report)
+        if len(env.config.benchmark_path) == 0:
+            env.report_analyser.plot(report)
+        else:
+            env.report_analyser.plot_with_benchmark(report,env.config.benchmark_path)
         env.report_analyser.plot_history_weight(report)
         
     #%% 收尾
